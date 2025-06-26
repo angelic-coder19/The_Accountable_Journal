@@ -1,0 +1,27 @@
+* {
+    font-family: "Rancho", cursive;
+}
+#brand {
+    font-family: 'Rancho';
+    font-size: 40px;
+}
+.navbar-toggler:focus,
+.navbar-toggler:active { 
+    outline: none;
+    box-shadow: none;
+}
+.icon {
+    height: 30px;
+    width: 30px;
+}
+#navigation-bar {
+    background-image: url(/static/background_images/Diary_image4.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+} 
+#entry {
+    width: 80%;
+    height: 80%;
+}

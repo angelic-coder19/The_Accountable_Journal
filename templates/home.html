@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+<div class="row text-center py-5">
+    <h2>Make an entry</h2>
+    <form action="/" method="POST">
+        <textarea id="entry" type="text" name="entry" autofocus autocomplete="off" placeholder="Dear Journal..."></textarea>
+        <br><br>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio1" value="Happy">
+            <label class="form-check-label" for="inlineRadio">Happy</label>
+        </div>    
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio2" value="Sad">
+            <label class="form-ceck-label" for="inlineRadio">Sad</label>
+        </div>    
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio3" value="Calm">
+            <label class="form-check-label" for="inlinRadio3">Calm</label>
+        </div>    
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio4" value="Angry">
+            <label class="form-check-label" for="inlinRadio4">Angry</label>
+        </div>    
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
+            <label class="form-check-label" for="inlinRadio5">Anxious</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
+            <label class="form-check-label" for="inlinRadio5">Anxious</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
+            <label class="form-check-label" for="inlinRadio5">Anxious</label>
+        </div>
+    </form>
+</div>
+{% endblock %}
