@@ -95,7 +95,7 @@ def index():
         session["user_id"] = user_id
 
         # Send success massage to the dashboard and redirect to homepage
-        flash(f"Welcome {name} \n Your journaling journey awaits!") 
+        flash(f"Welcome, {name} <br>  Your journaling journey awaits!") 
         return redirect("/home")
 
     return render_template("register.html")
@@ -104,6 +104,15 @@ def index():
 @login_required
 def home():
     return render_template("home.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    # Clear session inforamtion (user_id)  
+    session.clear()
+    
+    #Redirect to register page
+    return redirect("/")
 
 
 
