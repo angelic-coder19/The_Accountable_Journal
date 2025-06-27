@@ -1,0 +1,6 @@
+# Ignore all svg files
+.env
+
+# Ignore all icons
+/static/icons
+/static/background_images
