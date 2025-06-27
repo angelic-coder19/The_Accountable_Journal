@@ -59,5 +59,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         console.log(base64IV);
 
     });
+
+    // Send the ecrypted email to the database on the server
     
 });
