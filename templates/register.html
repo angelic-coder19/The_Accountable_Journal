@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <div class="row text-center">
+       <p>{{ error }} </p>
+    </div>
+    <div class = "row text-center">
+            <h1>Sign Up to start you journaling journey today!</h1>
+            <form action="/" method="POST">
+                <input type="text" placeholder="Psuedo Name" requrired autofocus name="name"><br><br>
+                <input type="email" placeholder="Email" required name="email"><br><br>
+                <input type="password" placeholder="Password" required name="password"><br><br>
+                <input type="password" placeholder="Confirm password" required name="confirmation"><br><br>
+                <button type="submit">Sign up</button>
+            </form>
+    </div>
+{% endblock %}
