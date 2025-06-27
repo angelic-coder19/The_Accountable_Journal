@@ -1,5 +1,6 @@
 from cs50 import SQL
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, flash, render_template, request, redirect, session
+from flask_session import Session
 from functools import wraps
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,14 +15,15 @@ db = SQL("sqlite:///journal.db")
 # Configure session to use filesystem instead of signed cookies
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-#session(app)
+Session(app)
 
 # Login decorator function for access control
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            return f(*args, **kwargs)
+            redirect("/")
+        return f(*args, **kwargs)
     return decorated_function
 
 @app.after_request
@@ -49,23 +51,23 @@ def index():
             error = "Enter a psuedo name eg. thoughtful-thinker12"
             return render_template("register.html", error = error)
 
-        if not (email and email.strip()):
+        elif not (email and email.strip()):
             error = "Enter a valide email"
 
         # Validate email by using the email regex
-        if re.match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is None:
+        elif re.match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is None:
             error = "Enter a valid email"
             return render_template("register.html", error = error)
         
         # Validate passwords to ensure they match
-        if not (password and password.strip()):
+        elif not (password and password.strip()):
             error = "Enter a password"
             return render_template("register.html", error=error)
-        if not (confirmation and confirmation.strip()):
+        elif not (confirmation and confirmation.strip()):
             error = "Please confirm your password"
             return render_template("register.html", error=error)
         
-        if str(password) != str(confirmation):
+        elif str(password) != str(confirmation):
             error = "Your passwords do not match"
             return render_template("register.html", error=error)
         
@@ -87,11 +89,21 @@ def index():
                     INSERT INTO authors (name, email, password)
                     VALUES (?, ?, ?)""", name, email.strip(), passaword_hash
                   )
-        error = "You have been registered"
-        return render_template("register.html", error=error)
+        
+        # Create a new session for the user 
+        user_id = db.execute("SELECT id FROM authors WHERE name = ? AND email = ?", name, email.strip())[0]['id']
+        session["user_id"] = user_id
+
+        # Send success massage to the dashboard and redirect to homepage
+        flash(f"Welcome {name} \n Your journaling journey awaits!") 
+        return redirect("/home")
 
     return render_template("register.html")
 
+@app.route("/home", methods=['GET','POST'])
+@login_required
+def home():
+    return render_template("home.html")
 
 
 
