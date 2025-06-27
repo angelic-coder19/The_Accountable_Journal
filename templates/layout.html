@@ -25,11 +25,20 @@
                         <a class="nav-link" href="#"><img class="icon" src="/static/icons/analytics_icon.svg"/><br>Analytics</a>
                         <a class="nav-link" href="#"><img class="icon" src="/static/icons/search_icon.svg"/><br>Search</a>
                         <a class="nav-link" href="#"><img class="icon" src="/static/icons/edit_notification_icon.svg"/><br>Customize</a>
-                        <a class="nav-link" href="#"><img class="icon" src="/static/icons/logout_icon.svg"/><br>Logout</a>
+                        <a class="nav-link" href="/logout"><img class="icon" src="/static/icons/logout_icon.svg"/><br>Logout</a>
                     </div>
                 </div>
             </div>
         </nav>
+        <div class="row text-center">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{ message |safe }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         <div class="container-fluid">
             {% block main %}
             {% endblock %}
