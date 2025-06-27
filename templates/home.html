@@ -7,37 +7,39 @@
 {% block main %}
 <div class="row text-center py-5">
     <h2>Make an entry</h2>
-    <form action="/" method="POST">
-        <textarea id="entry" type="text" name="entry" autofocus autocomplete="off" placeholder="Dear Journal..."></textarea>
-        <br><br>
+        <div class="col">
+            <textarea id="entry" type="text" name="entry" autofocus autocomplete="off" placeholder="Dear Journal..."></textarea>
+        </div>
+        <form action="/" method="POST">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio1" value="Happy">
-            <label class="form-check-label" for="inlineRadio">Happy</label>
+            <label class="form-check-label" for="inlineRadio">😆Happy</label>
         </div>    
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio2" value="Sad">
-            <label class="form-ceck-label" for="inlineRadio">Sad</label>
+            <label class="form-ceck-label" for="inlineRadio">😔Sad</label>
         </div>    
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio3" value="Calm">
-            <label class="form-check-label" for="inlinRadio3">Calm</label>
+            <label class="form-check-label" for="inlinRadio3">🙂Calm</label>
         </div>    
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio4" value="Angry">
-            <label class="form-check-label" for="inlinRadio4">Angry</label>
+            <label class="form-check-label" for="inlinRadio4">😡Angry</label>
         </div>    
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
-            <label class="form-check-label" for="inlinRadio5">Anxious</label>
+            <label class="form-check-label" for="inlinRadio5">😟Anxious</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Confident">
+            <label class="form-check-label" for="inlinRadio5">😎Confident</label>
         </div>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
-            <label class="form-check-label" for="inlinRadio5">Anxious</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
-            <label class="form-check-label" for="inlinRadio5">Anxious</label>
-        </div>
+            <label class="form-check-label" for="inlinRadio5">😐Meh</label>
+        </div><br><br>
+        <button class="submit" type="submit"><img class="icon" src="/static/icons/save_icon.svg"/>Save</button>    
     </form>
 </div>
 {% endblock %}

@@ -1,19 +1,23 @@
 document.addEventListener('DOMContentLoaded', async function(){
+
+    var entry = '';
     
-    // Get the entry from the text area
+    // Get the entry from the text area and append it to the empty string
     document.querySelector('textarea').addEventListener('keyup', function() {
-        var entry = document.querySelector('textarea').value;
-        console.log(entry);
+        entry += document.querySelector('textarea').value;
     });
+
+    // document.querySelector('textarea').innerHTML = entry;
 
     // Listen for the save button to be clicked to encrypt and send the entry to the server
     document.querySelector('.submit').addEventListener('click', async function() {
+    
         // Check if the entry is empty
-        if (!entry.trim()){
-            alert("Please make an entry")
+        if (!String(entry).trim()){
+            alert("Please make an entry");
             return;
-        }
-        
+        }   
+
         
         // Generate a cryptographic key 
         const key = await crypto.subtle.generateKey(
@@ -22,9 +26,10 @@ document.addEventListener('DOMContentLoaded', async function(){
             ["encrypt", "decrypt"]          // list of k
         );
 
+        console.log(key);
         
         // Encode the entry into bytes
-        const bytes = TextEncoder().encode(entry);
+        const bytes = new TextEncoder().encode(entry);
 
         // Generate a random initialization vector(iv)
         const IV = crypto.getRandomValues(new Uint8Array(12));
@@ -50,7 +55,9 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
 
         let base64IV = btoa(binaryIV);
+        console.log(base64string);
+        console.log(base64IV);
 
-        console.log(key);
     });
+    
 });
