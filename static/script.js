@@ -1,5 +1,35 @@
 document.addEventListener('DOMContentLoaded', async function(){
 
+    // To convert the number format months into readable words 
+    function getStringDate(month){
+        switch(month){
+            case 1:
+                return 'January';
+            case 2:
+                return 'February';
+            case 3:
+                return 'March';
+            case 4:
+                return 'April';
+            case 5:
+                return 'May';
+            case 6:
+                return 'June';
+            case 7:
+                return 'July';
+            case 8:
+                return 'August';
+            case 9:
+                return 'September';
+            case 10:
+                return 'October';
+            case 11:
+                return 'November';
+            case 12:
+                return 'December';
+        }
+    }
+
     var entry = '';
     
     // Get the entry from the text area and append it to the empty string
@@ -7,14 +37,14 @@ document.addEventListener('DOMContentLoaded', async function(){
         entry += document.querySelector('textarea').value;
     });
 
-    // document.querySelector('textarea').innerHTML = entry;
-
     // Listen for the save button to be clicked to encrypt and send the entry to the server
     document.querySelector('.submit').addEventListener('click', async function() {
-    
+        // Find the mood value that was selected 
+        mood = document.querySelector('input[name="mood"]:checked').value;
+            
         // Check if the entry is empty
-        if (!String(entry).trim()){
-            alert("Please make an entry");
+        if (!String(entry).trim() || !mood){
+            alert("Please make an entry and select a mood");
             return;
         }   
 
@@ -56,9 +86,6 @@ document.addEventListener('DOMContentLoaded', async function(){
 
         let base64IV = btoa(binaryIV);
 
-        // Find the mood value that was selected 
-        mood = document.querySelector('input[name="mood"]:checked').value;
-        
         // Send the ecrypted entry, iv and mood to the database on the server    
         fetch('/home', {
             method: 'POST',
@@ -71,10 +98,26 @@ document.addEventListener('DOMContentLoaded', async function(){
                 mood : mood })
         });
         
-        console.log(base64string);
-        console.log(base64IV);
-
     });
 
-    
+    // Request for information from the server for decryption
+    let response = await fetch("/search");
+    let entries = await response.json(); // Get a list of json objects from each entry
+
+    // Find the table element from the DOM
+    const table = document.querySelector(".table")
+
+    // Iterate over each json object and collect info
+    for (let entry of entries){
+        let day = entry["day"];
+        let month = entry["month"];
+        let time = entry["time"];
+        let year = entry["year"];
+        let cipherEntry = entry["entry"];
+        let iv = entry["iv"];
+        let mood = entry["mood"];
+
+
+    }
+
 });
