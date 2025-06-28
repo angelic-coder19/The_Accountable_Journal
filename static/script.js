@@ -55,11 +55,26 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
 
         let base64IV = btoa(binaryIV);
+
+        // Find the mood value that was selected 
+        mood = document.querySelector('input[name="mood"]:checked').value;
+        
+        // Send the ecrypted entry, iv and mood to the database on the server    
+        fetch('/home', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                entry : base64string,
+                iv : base64IV,
+                mood : mood })
+        });
+        
         console.log(base64string);
         console.log(base64IV);
 
     });
 
-    // Send the ecrypted email to the database on the server
     
 });

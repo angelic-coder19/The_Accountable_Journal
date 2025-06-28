@@ -103,11 +103,31 @@ def index():
 @app.route("/home", methods=['GET','POST'])
 @login_required
 def home():
-    # When form is filled in via post
+    # When data is sent from the frontend 
     if request.method == 'POST':
-        mood = request.form.get('mood')
-    
+        user_id = session["user_id"]
+        data = request.get_json()
+        entry = data['entry']
+        mood = data['mood']
+        iv = data['iv']
 
+        # Enter the mood, author_id and iv of the new entry
+        db.execute("INSERT INTO entries (author_id, entry, iv, mood) VALUES (?, ?, ?, ?)", user_id, entry, iv, mood)
+        
+        # Enter the time of the entry
+        entry_id = db.execute("SELECT id FROM entries WHERE iv = ? AND author_id = ?", iv, user_id)[0]['id']
+        db.execute("""
+                    INSERT INTO dates (entry_id, year, month, day, time)
+                    VALUES (
+                        ?,
+                        CAST(strftime('%Y', 'now') AS INTEGER),
+                        CAST(strftime('%m', 'now') AS INTEGER),
+                        CAST(strftime('%d', 'now') AS INTEGER),
+                        strftime('%H:%M', 'now')
+                    )""", entry_id)
+        
+        flash("Your entery has been added")
+        return redirect("home.html")
 
     return render_template("home.html")
 
