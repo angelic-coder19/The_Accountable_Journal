@@ -8,8 +8,8 @@
 <div class="row text-center">
     <h2>Pick up where you left off!<br>login</h2>
     <form action="/login" method="POST">
-        <input name="email" autofocus type="text" placeholder="Email"><br><br>
-        <input name="password" type="password" placeholder="Password"><br><br>
+        <input name="email" autofocus type="email" required placeholder="Email"><br><br>
+        <input name="password" type="password" required placeholder="Password"><br><br>
         <button type="submit">login</button> <p>{{ error }}</p>
     </form>
 </div>
