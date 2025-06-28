@@ -142,6 +142,10 @@ def logout():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # Forget any user_id
+    session.clear()
+
+    # User reached this route via POST by filling in a form 
     if request.method == "POST":
         password = request.form.get('password')
         email = request.form.get('email')
@@ -155,19 +159,20 @@ def login():
             return render_template("login.html", error=error)
 
         # Check if emails match
-        db_email = db.execute("SELECT email FROM authors WHERE email = ?", email)[0]['email']
-        if not db_email:
-            error = "Incorrect email or password"
+        rows = db.execute(
+            "SELECT * FROM authors WHERE email = ?", email
+        ) 
+
+        # Ensure that the user exists and the password is correct
+        if len(rows) != 1 or not check_password_hash(
+            rows[0]['password'], password
+        ):
+            error = "Incorrect email and/or password" 
             return render_template("login.html", error=error)
 
-        # Check if passwords match
-        elif check_password_hash(password, db.execute("SELECT password FROM authors WHERE email = ?", email.strip())[0]['password']):
-            error = "Incorrect email or password"
-            return render_template("login.html", error=error)
-        
         # Begin a new session for that user and redirect them to the homepage
-        session["user_id"] = db.execute("SELECT id FROM authors WHERE email = ?", email.strip())[0]['id']
-        name = db.execute("SELECT name FROM authors WHERE email = ?", email)[0]['name']
+        session["user_id"] = rows[0]['id']
+        name = rows[0]['name']
         flash(f"Welcome back, {name}!")
         return redirect("/home")
 
