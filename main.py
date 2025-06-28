@@ -103,6 +103,12 @@ def index():
 @app.route("/home", methods=['GET','POST'])
 @login_required
 def home():
+    # When form is filled in via post
+    if request.method == 'POST':
+        mood = request.form.get('mood')
+    
+
+
     return render_template("home.html")
 
 @app.route("/logout")
@@ -113,6 +119,39 @@ def logout():
     
     #Redirect to register page
     return redirect("/")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        password = request.form.get('password')
+        email = request.form.get('email')
+
+        # Validate email and password
+        if not (password and password.strip()):
+            error = "Please enter a password"
+            return render_template("login.html", error=error)
+        elif not (email and email.strip()): 
+            error = "Please enter your email"
+            return render_template("login.html", error=error)
+
+        # Check if emails match
+        db_email = db.execute("SELECT email FROM authors WHERE email = ?", email)[0]['email']
+        if not db_email:
+            error = "Incorrect email or password"
+            return render_template("login.html", error=error)
+
+        # Check if passwords match
+        elif check_password_hash(password, db.execute("SELECT password FROM authors WHERE email = ?", email.strip())[0]['password']):
+            error = "Incorrect email or password"
+            return render_template("login.html", error=error)
+        
+        # Begin a new session for that user and redirect them to the homepage
+        session["user_id"] = db.execute("SELECT id FROM authors WHERE email = ?", email.strip())[0]['id']
+        name = db.execute("SELECT name FROM authors WHERE email = ?", email)[0]['name']
+        flash(f"Welcome back, {name}!")
+        return redirect("/home")
+
+    return render_template("login.html")
 
 
 
