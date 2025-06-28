@@ -1,5 +1,5 @@
 from cs50 import SQL
-from flask import Flask, flash, render_template, request, redirect, session
+from flask import Flask, flash, render_template, request, redirect, session, jsonify
 from flask_session import Session
 from functools import wraps
 import re
@@ -106,6 +106,7 @@ def home():
     # When data is sent from the frontend 
     if request.method == 'POST':
         user_id = session["user_id"]
+        # Get the entry input from the front end 
         data = request.get_json()
         entry = data['entry']
         mood = data['mood']
@@ -127,7 +128,7 @@ def home():
                     )""", entry_id)
         
         flash("Your entery has been added")
-        return redirect("home.html")
+        return redirect("/search")
 
     return render_template("home.html")
 
@@ -178,5 +179,24 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/search", methods=['GET','POST'])
+@login_required
+def search():
+    """ Query for all the Entries and allow for search operations """
+
+    # When the page is simply requested, send the enties to frontend
+    info = db.execute("""
+                    SELECT entry, iv, mood, year, month, day, time
+                    FROM entries
+                    JOIN dates ON entries.id = dates.entry_id
+                    WHERE entries.id IN 
+                    (
+                        SELECT id 
+                        FROM entries 
+                        WHERE author_id = ?
+                    )""", session["user_id"]
+    )
+
+    return jsonify(info)
 
 
