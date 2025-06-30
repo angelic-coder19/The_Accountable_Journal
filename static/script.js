@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     function getBGcolor(mood) {
         switch(mood){
             case 'Happy':
-                return "#FFF176"; // light yellow
+                return "#FFF136"; // light yellow
             case 'Sad':
                 return "#0fb4FA";  // 
             case 'Angry':
@@ -48,17 +48,17 @@ document.addEventListener('DOMContentLoaded', async function(){
             case 'Confident':
                 return "#5c6bc0";
             case 'Meh':
-                return "#d7ccc8";
+                return "#858585"; // a dark gray
             case 'Hopeful':
-                return "#ffcc80";
+                return "#ffcc80"; // orangeish 
             case 'Tired':
-                return "#90a4ae";   
+                return "#90a4ae"; // bluish grey
             case 'Grateful':
                 return "#aed581"  // olive green  
             case 'Lonely':
                 return "#b39ddb"; // bluish-grey
-            case 'Inpired':
-                return "#add0e1"; // turquoise
+            case 'Inspired':
+                return "#f0e035"; // dark yeallow
             default:
                 return "#ffffff"; // White 
         }
@@ -162,12 +162,16 @@ document.addEventListener('DOMContentLoaded', async function(){
         // Listen for the save button to be clicked to encrypt and send the entry to the server
         document.querySelector('#submit').addEventListener('click', async function() {
         // Find the mood value that was selected 
-            mood = document.querySelector('input[name="mood"]:checked').value;
+            try {
+                mood = document.querySelector('input[name="mood"]:checked').value;
                 
-            // Check if the entry is empty
-            if (!String(entry).trim() || !mood){
-                alert("Please make an entry and select a mood");
-                return;
+                // Check if the entry is empty
+                if (!String(entry).trim() || !mood){
+                    alert("Please make an entry and select a mood");
+                    return;
+                }
+            } catch (TypeError) {
+                alert("Select a mood");
             }   
             
             // Encode the entry into bytes
@@ -237,14 +241,14 @@ document.addEventListener('DOMContentLoaded', async function(){
             const plainText = new TextDecoder().decode(decryptedBuffer);
             
             // Dyanmically generat card to display a single entry and it's information
-            body.innerHTML += `<div class="row">
+            body.innerHTML += `<div class="row card">
                         <div class="col infoCard col-lg-8 col-sm-12" style="background-color: ${getBGcolor(mood)}">
                         <div class="row">
                             <div class="col text-start col-lg-6 col-sm-8">
                                 <p>${String(day) + ordinalIndicator(day) + " "+ month + ", " + year}<p>
                             </div>
                             <div class="col text-end col-lg-6 col-sm-8">
-                                <p>${time}</p>
+                                <p class="time">${time}</p>
                             </div>
                         </div>
                         <div class="row text-center entry">
@@ -255,12 +259,43 @@ document.addEventListener('DOMContentLoaded', async function(){
                                 <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
                             </div>
                             <div class="col text-end">
-                                <p> Feeling <strong>${mood}</strong></p>
+                                <p> Feeling <b class="mood">${mood}</b></p>
                             </div>
                         </div>
                         </div>
                     </div>`    
         }
+
+        // Find all delete icons and make the ready for deletion
+        let deleteButtons = document.querySelectorAll('.deleteIcon');
+        for (let deleteButton of deleteButtons){
+            deleteButton.addEventListener('click', function (event){
+                // Find which button was clicked
+                deleteButton = event.target;
+                
+                // Navigate up the DOM tree and delte that row
+                card = deleteButton.closest('.card');
+
+                // API to delete the entry from the database 
+                const time = card.querySelector('.time').innerHTML;
+                const mood = card.querySelector('.mood').innerHTML;
+                
+                fetch("/delete",{
+                    method: "POST", 
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        del_time : time,
+                        del_mood : mood 
+                    })
+                });
+
+                // Delete the entry client side
+                card.remove();
+            });
+        }
+
     } catch (TypeError) {
         console.log("Everything is fine🙂");
     }

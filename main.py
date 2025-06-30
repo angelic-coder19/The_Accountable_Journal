@@ -129,6 +129,7 @@ def home():
         flash("Your entery has been added")
         return redirect("/search")
 
+    # When the home page is reached
     return render_template("home.html")
 
 @app.route("/logout")
@@ -178,9 +179,9 @@ def login():
 
     return render_template("login.html")
 
-@app.route("/search", methods=['GET','POST'])
+@app.route("/info", methods=['GET','POST'])
 @login_required
-def search():
+def info():
     """ Query for all the Entries and allow for search operations """ 
 
     # When the page is simply requested, send the enties to frontend
@@ -193,7 +194,8 @@ def search():
                         SELECT id 
                         FROM entries 
                         WHERE author_id = ?
-                    )""", session["user_id"]
+                    )
+                    ORDER BY id DESC""", session["user_id"]
     )
 
     return jsonify(info)
@@ -206,3 +208,34 @@ def key():
     key = db.execute("SELECT key FROM keys")[0]["key"]
 
     return jsonify(key)
+
+@app.route("/search")
+@login_required
+def search():
+    return render_template("search.html")
+
+@app.route("/delete", methods=['POST'])
+@login_required
+def delete():
+    """ Deleting entries """
+    time = request.get_json()["del_time"]
+    mood = request.get_json()["del_mood"]
+
+    # Get the id of the entry given the inforamtion from the frontend
+    id = db.execute(f"""
+        SELECT id 
+        FROM entries
+        WHERE mood = ? AND author_id = {session["user_id"]}
+        INTERSECT 
+        SELECT entry_id 
+        FROM dates 
+        WHERE time = ?""", mood, time
+    )[0]["id"]
+
+    # Delete the rows with that id from both tables
+    db.execute(f"DELETE FROM entries WHERE id = {id}")
+    db.execute(f"DELETE FROM dates WHERE entry_id = {id}")
+    
+    # flash a success message 
+    flash("Your entry has been successfully deleted")
+    return redirect("/search")
