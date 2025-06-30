@@ -125,8 +125,7 @@ def home():
                         CAST(strftime('%m', 'now') AS INTEGER),
                         CAST(strftime('%d', 'now') AS INTEGER),
                         strftime('%H:%M', 'now')
-                    )""", entry_id)
-        
+                    )""", entry_id)   
         flash("Your entery has been added")
         return redirect("/search")
 
@@ -182,7 +181,7 @@ def login():
 @app.route("/search", methods=['GET','POST'])
 @login_required
 def search():
-    """ Query for all the Entries and allow for search operations """
+    """ Query for all the Entries and allow for search operations """ 
 
     # When the page is simply requested, send the enties to frontend
     info = db.execute("""
@@ -199,4 +198,11 @@ def search():
 
     return jsonify(info)
 
+@app.route("/key")
+@login_required
+def key():
+    """ Send the encryption key to the frontend for use """
 
+    key = db.execute("SELECT key FROM keys")[0]["key"]
+
+    return jsonify(key)
