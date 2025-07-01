@@ -17,6 +17,9 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Global list to store search results
+search_results = []
+
 # Login decorator function for access control
 def login_required(f):
     @wraps(f)
@@ -184,6 +187,7 @@ def login():
 def info():
     """ Query for all the Entries and allow for search operations """ 
 
+
     # When the page is simply requested, send the enties to frontend
     info = db.execute("""
                     SELECT entry, iv, mood, year, month, day, time
@@ -209,10 +213,97 @@ def key():
 
     return jsonify(key)
 
-@app.route("/search")
+@app.route("/search", methods=['POST', 'GET'])
 @login_required
 def search():
-    return render_template("search.html")
+    """ Allow the user to search for information that they have """
+    
+    # If the user searches for a specific entry by filining in the form
+    if request.method == "POST":
+        # Get the search parameters from the form
+        mood = request.form.get('mood')
+        year = request.form.get('year')
+        month = request.form.get('month')
+        day = request.form.get('day')
+        
+        # Render a message if no parameter has been passed
+        if (not mood) and (not month) and (not year) and (not day):
+            flash("You have not passed any parameters into your search")
+            return redirect("/search")
+        
+        # If any of the other parameters is empty, pass in the actuall column name
+        if not mood:
+            mood = 'mood'
+        if not year or year == 'year':
+            year = 'year'
+        year = int(year)
+        if not month or month == 'month':
+            month = 'month'
+        month = int(month)
+        if not day:
+            day = 'day'
+        day = int(day)
+
+        print(mood, year, type(day), month)
+        results = db.execute(f"""
+            SELECT entry, iv, mood, month, day, time 
+            FROM entries 
+            JOIN dates on entries. id = dates.entry_id
+            WHERE entries.id IN (
+                SELECT id FROM entries  
+                WHERE author_id = ?
+                )
+            AND month = ? AND day = {day}
+            AND year = {year} AND mood = ?
+        """, session["user_id"], month, mood 
+        )   
+        """
+        # Inform the user if no results are found
+        if len(results) == 0:
+            flash("No entries were found from your input")
+            return redirect("/search")
+        """
+
+        # Append the results to the global array 
+        search_results = results
+        return search_results
+    
+    # If the page is reached via GET collect all the 'searchables'
+    searchables = db.execute("""
+                    SELECT mood, year, month, day
+                    FROM entries
+                    JOIN dates ON entries.id = dates.entry_id
+                    WHERE entries.id IN 
+                    (
+                        SELECT id 
+                        FROM entries 
+                        WHERE author_id = ?
+                    )
+                    ORDER BY id DESC""", session["user_id"]
+    )
+    # Make empty lists for each of the searchables
+    moods = [] 
+    years = [] 
+    months = []
+    days = []
+
+    # Iterate over each of the dicts in the searchables list and append the individual lists 
+    for searchable in searchables:
+        # Append only distict items into each searchable
+        if searchable["mood"] not in moods:
+            moods.append(searchable["mood"])
+
+        if searchable["year"] not in years:
+            years.append(searchable["year"])
+
+        if searchable["month"] not in months: 
+            months.append(searchable["month"])
+
+        if searchable["day"] not in days:
+            days.append(searchable["day"])
+
+    # Render the template and give the 'searchables'
+    return render_template("search.html", moods=moods, years=years, days=days, months=months)
 
 @app.route("/delete", methods=['POST'])
 @login_required
@@ -239,3 +330,10 @@ def delete():
     # flash a success message 
     flash("Your entry has been successfully deleted")
     return redirect("/search")
+
+@app.route("/results")
+@login_required
+def results():
+
+    return jsonify(search_results)
+    

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.jinja2" %}
 
 {% block title %}
     Entries
@@ -7,6 +7,54 @@
 {% block main %}
 <div class="row text-center">
     <h2>Your Entries</h2>
+</div>
+<div col="row text-center py-3">
+    <form action="/search" method="POST" id="searchForm">
+        <div class="col col-sm-4 py-3 text-center">
+            <select class="orderMenu" value="ORDER-BY" name="order-by">
+                <option selected disabled>Show</option>
+                <option value="">Latest</option>
+                <option value="DESC">Oldest</option>
+            </select>
+        </div>
+        <div class="col col-sm-4 py-3 text-center">
+            <select class="searchMenu"  name="year">
+                <option selected disabled>Year</option>
+                {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col col-sm-4 text center">
+            <select class="searchMenu" name="month">
+                <option selected disabled>Month</option>
+                {% for month in months %}
+                    <option value="{{ month }}"> {{ month }}</option>
+                {% endfor %}
+                <option value="month">All</option>
+            </select>
+        </div>
+        <div class="col col-sm-4 text center">
+
+            <select class="searchMenu" name="day">
+                <option selected disabled>Day</option>
+                {% for day in days %}
+                    <option value="{{ day }}">{{ day }}</option>
+                {% endfor %}
+                <option value="day">All</option>
+            </select>
+        </div>
+        <div class="col col-sm-4">
+            <select class="searchMenu" name="mood">
+                <option selected disabled>Mood</option>
+                {% for mood in moods %}
+                    <option value="{{ mood }}">{{ mood }}</option>
+                {% endfor %}
+                <option value="mood">All</option>
+            </select>
+        </div>
+        <button class="btn" type="submit"><img src="/static/icons/search_icon.svg"/></button>
+    </form>
 </div>
 <div id="mainBody">
     <!-- Java Scipt will render the rest -->

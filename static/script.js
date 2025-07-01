@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             case 'Happy':
                 return "#FFF136"; // light yellow
             case 'Sad':
-                return "#0fb4FA";  // 
+                return "#5c6bc0";  // 
             case 'Angry':
                 return "#f40a04"; // bright red 
             case 'Calm':
@@ -46,15 +46,15 @@ document.addEventListener('DOMContentLoaded', async function(){
             case 'Anxious':
                 return "#ce83d8";
             case 'Confident':
-                return "#5c6bc0";
+                return "#0fb4FA";  
             case 'Meh':
                 return "#858585"; // a dark gray
             case 'Hopeful':
-                return "#ffcc80"; // orangeish 
+                return "#ff6f02"; // orangeish 
             case 'Tired':
                 return "#90a4ae"; // bluish grey
             case 'Grateful':
-                return "#aed581"  // olive green  
+                return "#aeee23"  // olive green  
             case 'Lonely':
                 return "#b39ddb"; // bluish-grey
             case 'Inspired':
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             const base64IV = bytesTobase64(IV);
 
             // Send the ecrypted entry, iv and mood to the database on the server    
-            fetch('/home', {
+            const response = await fetch('/home', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -206,6 +206,33 @@ document.addEventListener('DOMContentLoaded', async function(){
     } catch (TypeError) {
         console.log("Everything is fine🙂")
     }
+     /*
+        // Get the contents of the from and convert them into a json object 
+        document.querySelector('#searchForm').addEventListener('submit', async function(event){
+            // Prevent the default form from bing sent
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const json = Object.fromEntries(formData.entries());
+
+            console.log(json);
+            // Send this from data to the search route via POST
+            const response = await fetch ("/results", {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(json)
+            });
+
+            const results = response.json();
+            console.log(results);
+        }); */
+    
+    let saearchResponse = await fetch("/results");
+    let searchResults = await saearchResponse.json();
+    console.log(searchResults);
+
+
 
     // Request for information from the server for decryption
     let response = await fetch("/info");
