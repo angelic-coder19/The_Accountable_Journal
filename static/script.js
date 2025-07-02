@@ -108,6 +108,66 @@ document.addEventListener('DOMContentLoaded', async function(){
         return btoa(binaryString);
     }
 
+    async function renderEntries(entries) {
+
+    try {
+        // Find the body object from the DOM
+        var body = document.querySelector('#mainBody'); 
+
+            // Iterate over each json object and collect info
+            for (let entry of entries){
+                let day = entry["day"];
+                let month = getStringDate(entry["month"]); // Convert the integar date to human readalbe month
+                let time = entry["time"];
+                let year = entry["year"];
+                let cipherEntry = entry["entry"]; // Base 64 string encrypted Entry 
+                let iv = entry["iv"];             // Base 64 string initialization vector
+                let mood = entry["mood"];
+
+                // Decrypt the encrypted message
+                let encryptedBytes = base64ToBytes(cipherEntry);
+                let ivBytes = base64ToBytes(iv);
+
+                let decryptedBuffer = await crypto.subtle.decrypt(
+                    {
+                        name: "AES-GCM", 
+                        iv: ivBytes
+                    },
+                    cryptoKey,
+                    encryptedBytes
+                ); 
+
+                const plainText = new TextDecoder().decode(decryptedBuffer);
+                
+                // Dyanmically generat card to display a single entry and it's information
+                body.innerHTML += `<div class="row my-0.5">
+                            <div class="col infoCard col-lg-8 col-sm-12" style="background-color: ${getBGcolor(mood)}">
+                            <div class="row">
+                                <div class="col text-start col-lg-6 col-sm-8">
+                                    <p>${String(day) + ordinalIndicator(day) + " "+ month + ", " + year}<p>
+                                </div>
+                                <div class="col text-end col-lg-6 col-sm-8">
+                                    <p class="time">${time}</p>
+                                </div>
+                            </div>
+                            <div class="row text-center entry">
+                                <p>${plainText}</p>
+                            </div>
+                            <div class="row">
+                                <div class="col text-start binIcon">
+                                    <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
+                                </div>
+                                <div class="col text-end">
+                                    <p> Feeling <b class="mood">${mood}</b></p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>`    
+            }
+        } catch (TypeError) {
+            console.log("Everything is fine🙂");
+        }
+    }
     /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING 
     // Generate a cryptographic key 
     const key = await crypto.subtle.generateKey(
@@ -149,10 +209,17 @@ document.addEventListener('DOMContentLoaded', async function(){
     );
     try {                           
         var entry = '';
-        
+        let words = 1;
+
         // Get the entry from the text area and append it to the empty string
-        document.querySelector('textarea').addEventListener('keyup', function() {
+        document.querySelector('textarea').addEventListener('blur', function() {
             entry = document.querySelector('textarea').value;
+            for (let i = 0; i < entry.length; i++){
+                if (entry[i] == " ") {
+                    words++;
+                }
+            }
+            console.log(words);
         });
     } catch (TypeError) {
         console.log("Everything is fine🙂");
@@ -227,71 +294,18 @@ document.addEventListener('DOMContentLoaded', async function(){
             const results = response.json();
             console.log(results);
         }); */
+    // Get the search results
+    const searchResponse = await fetch("/results");
+    const results = await searchResponse.json();
     
-    let saearchResponse = await fetch("/results");
-    let searchResults = await saearchResponse.json();
-    console.log(searchResults);
+    if (results.length > 0) {
+        renderEntries(results);
+    } 
+            // Request for information from the server for decryption
+        let response = await fetch("/info");
+        let entries = await response.json(); // Get a list of json objects from each entry
 
-
-
-    // Request for information from the server for decryption
-    let response = await fetch("/info");
-    let entries = await response.json(); // Get a list of json objects from each entry
-
-    try {
-        // Find the body object from the DOM
-        var body = document.querySelector('#mainBody'); 
-
-        // Iterate over each json object and collect info
-        for (let entry of entries){
-            let day = entry["day"];
-            let month = getStringDate(entry["month"]); // Convert the integar date to human readalbe month
-            let time = entry["time"];
-            let year = entry["year"];
-            let cipherEntry = entry["entry"]; // Base 64 string encrypted Entry 
-            let iv = entry["iv"];             // Base 64 string initialization vector
-            let mood = entry["mood"];
-
-            // Decrypt the encrypted message
-            let encryptedBytes = base64ToBytes(cipherEntry);
-            let ivBytes = base64ToBytes(iv);
-
-            let decryptedBuffer = await crypto.subtle.decrypt(
-                {
-                    name: "AES-GCM", 
-                    iv: ivBytes
-                },
-                cryptoKey,
-                encryptedBytes
-            ); 
-
-            const plainText = new TextDecoder().decode(decryptedBuffer);
-            
-            // Dyanmically generat card to display a single entry and it's information
-            body.innerHTML += `<div class="row card">
-                        <div class="col infoCard col-lg-8 col-sm-12" style="background-color: ${getBGcolor(mood)}">
-                        <div class="row">
-                            <div class="col text-start col-lg-6 col-sm-8">
-                                <p>${String(day) + ordinalIndicator(day) + " "+ month + ", " + year}<p>
-                            </div>
-                            <div class="col text-end col-lg-6 col-sm-8">
-                                <p class="time">${time}</p>
-                            </div>
-                        </div>
-                        <div class="row text-center entry">
-                            <p>${plainText}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col text-start binIcon">
-                                <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
-                            </div>
-                            <div class="col text-end">
-                                <p> Feeling <b class="mood">${mood}</b></p>
-                            </div>
-                        </div>
-                        </div>
-                    </div>`    
-        }
+        renderEntries(entries);
 
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
@@ -323,7 +337,4 @@ document.addEventListener('DOMContentLoaded', async function(){
             });
         }
 
-    } catch (TypeError) {
-        console.log("Everything is fine🙂");
-    }
 }); 

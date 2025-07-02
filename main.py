@@ -217,7 +217,8 @@ def key():
 @login_required
 def search():
     """ Allow the user to search for information that they have """
-    
+    global search_results
+
     # If the user searches for a specific entry by filining in the form
     if request.method == "POST":
         # Get the search parameters from the form
@@ -230,43 +231,53 @@ def search():
         if (not mood) and (not month) and (not year) and (not day):
             flash("You have not passed any parameters into your search")
             return redirect("/search")
-        
-        # If any of the other parameters is empty, pass in the actuall column name
-        if not mood:
-            mood = 'mood'
-        if not year or year == 'year':
-            year = 'year'
-        year = int(year)
-        if not month or month == 'month':
-            month = 'month'
-        month = int(month)
-        if not day:
-            day = 'day'
-        day = int(day)
-
-        print(mood, year, type(day), month)
-        results = db.execute(f"""
-            SELECT entry, iv, mood, month, day, time 
+        # Initialize a query 
+        query = """
+            SELECT entry, iv, mood, month, day, time
             FROM entries 
-            JOIN dates on entries. id = dates.entry_id
+            JOIN dates ON entries.id = dates.entry_id 
             WHERE entries.id IN (
-                SELECT id FROM entries  
+                SELECT id FROM entries 
                 WHERE author_id = ?
-                )
-            AND month = ? AND day = {day}
-            AND year = {year} AND mood = ?
-        """, session["user_id"], month, mood 
-        )   
+            )   
         """
+        values = [session["user_id"]]
+
+        # Append filters conditionally 
+        if year and year != 'year':
+            query += " AND year = ?"
+            values.append(int(year))
+        else:
+            query += " AND year = year"
+
+        if month and month != 'month':
+            query += " AND month = ?"
+            values.append(int(month))
+        else:
+            query += " AND month = month"
+        
+        if day and day != 'day':
+            query += " AND day = ?"
+            values.append(int(day))
+        else: 
+            query += " AND day = day"
+
+        if mood:
+            query += " AND mood = ?"
+            values.append(mood)
+        else:
+            query += " AND mood = mood"
+        
+        results = db.execute(query, *values)   
+        
         # Inform the user if no results are found
         if len(results) == 0:
             flash("No entries were found from your input")
             return redirect("/search")
-        """
 
         # Append the results to the global array 
         search_results = results
-        return search_results
+        return render_template("search_results.jinja")
     
     # If the page is reached via GET collect all the 'searchables'
     searchables = db.execute("""
