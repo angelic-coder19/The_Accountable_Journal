@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     function getBGcolor(mood) {
         switch(mood){
             case 'Happy':
-                return "#FFF136"; // light yellow
+                return "#FFf200"; // light yellow
             case 'Sad':
                 return "#5c6bc0";  // 
             case 'Angry':
@@ -108,11 +108,11 @@ document.addEventListener('DOMContentLoaded', async function(){
         return btoa(binaryString);
     }
 
-    async function renderEntries(entries) {
+    async function renderEntries(entries, id) {
 
     try {
         // Find the body object from the DOM
-        var body = document.querySelector('#mainBody'); 
+        var body = document.querySelector(`${id}`); 
 
             // Iterate over each json object and collect info
             for (let entry of entries){
@@ -299,13 +299,13 @@ document.addEventListener('DOMContentLoaded', async function(){
     const results = await searchResponse.json();
     
     if (results.length > 0) {
-        renderEntries(results);
+        renderEntries(results, '#searchResults');
     } 
             // Request for information from the server for decryption
         let response = await fetch("/info");
         let entries = await response.json(); // Get a list of json objects from each entry
 
-        renderEntries(entries);
+        renderEntries(entries, '#mainBody');
 
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
@@ -332,9 +332,8 @@ document.addEventListener('DOMContentLoaded', async function(){
                     })
                 });
 
-                // Delete the entry client side
+                // Delete the entry card client side
                 card.remove();
             });
         }
-
 }); 

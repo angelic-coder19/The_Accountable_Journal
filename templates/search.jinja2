@@ -7,8 +7,9 @@
 {% block main %}
 <div class="row text-center">
     <h2>Your Entries</h2>
+    
 </div>
-    <form action="/search" method="POST" id="searchForm">
+    <form action="/home" method="POST" id="searchForm">
         <div class="row">
         <div class="col col-sm-4">
             <select class="searchMenu"  name="year">
@@ -49,18 +50,15 @@
         </div>
         <div class="row">
         <div class="col col-sm-4">
-            <select class="orderMenu" value="ORDER-BY" name="order-by">
-                <option selected disabled>Show</option>
-                <option value="">Latest</option>
-                <option value="DESC">Oldest</option>
-            </select>
         </div>
         <div class="col col-sm-6 text-end">
         <button class="btn" type="submit"><img src="/static/icons/search_icon.svg"/></button>
         </div>   
     </div>
     </form>
-<div id="mainBody">
-    <!-- Java Scipt will render the rest -->
-</div>
+    {% block entries %}
+        <div id="mainBody">
+            <!-- Java Scipt will render the rest -->
+        </div>
+    {% endblock %}
 {% endblock %}

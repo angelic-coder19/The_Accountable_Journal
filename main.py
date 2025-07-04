@@ -103,9 +103,9 @@ def index():
 
     return render_template("register.html")
 
-@app.route("/home", methods=['GET','POST'])
+@app.route("/make_entry", methods=['GET','POST'])
 @login_required
-def home():
+def make_entry():
     # When data is sent from the frontend 
     if request.method == 'POST':
         user_id = session["user_id"]
@@ -130,7 +130,7 @@ def home():
                         strftime('%H:%M', 'now')
                     )""", entry_id)   
         flash("Your entery has been added")
-        return redirect("/search")
+        return redirect("/home")
 
     # When the home page is reached
     return render_template("home.html")
@@ -212,11 +212,45 @@ def key():
 
     return jsonify(key)
 
-@app.route("/search", methods=['POST', 'GET'])
+@app.route("/home", methods=['POST', 'GET'])
 @login_required
-def search():
+def home():
     """ Allow the user to search for information that they have """
     global search_results
+    
+    # Collect all the 'searchables' and make them ready to both templates
+    searchables = db.execute("""
+                    SELECT mood, year, month, day
+                    FROM entries
+                    JOIN dates ON entries.id = dates.entry_id
+                    WHERE entries.id IN 
+                    (
+                        SELECT id 
+                        FROM entries 
+                        WHERE author_id = ?
+                    )
+                    ORDER BY id DESC""", session["user_id"]
+    )
+    # Make empty lists for each of the searchables
+    moods = [] 
+    years = [] 
+    months = []
+    days = []
+
+    # Iterate over each of the dicts in the searchables list and append the individual lists 
+    for searchable in searchables:
+        # Append only distict items into each searchable
+        if searchable["mood"] not in moods:
+            moods.append(searchable["mood"])
+
+        if searchable["year"] not in years:
+            years.append(searchable["year"])
+
+        if searchable["month"] not in months: 
+            months.append(searchable["month"])
+
+        if searchable["day"] not in days:
+            days.append(searchable["day"])
 
     # If the user searches for a specific entry by filining in the form
     if request.method == "POST":
@@ -229,10 +263,10 @@ def search():
         # Render a message if no parameter has been passed
         if (not mood) and (not month) and (not year) and (not day):
             flash("You have not passed any parameters into your search")
-            return redirect("/search")
+            return redirect("/home")
         # Initialize a query 
         query = """
-            SELECT entry, iv, mood, month, day, time
+            SELECT entry, iv, mood, month, day, time, year
             FROM entries 
             JOIN dates ON entries.id = dates.entry_id 
             WHERE entries.id IN (
@@ -272,45 +306,11 @@ def search():
         # Inform the user if no results are found
         if len(results) == 0:
             flash("No entries were found from your input")
-            return redirect("/search")
+            return redirect("/home")
 
         # Append the results to the global array 
         search_results = results
-        return render_template("search_results.jinja")
-    
-    # If the page is reached via GET collect all the 'searchables'
-    searchables = db.execute("""
-                    SELECT mood, year, month, day
-                    FROM entries
-                    JOIN dates ON entries.id = dates.entry_id
-                    WHERE entries.id IN 
-                    (
-                        SELECT id 
-                        FROM entries 
-                        WHERE author_id = ?
-                    )
-                    ORDER BY id DESC""", session["user_id"]
-    )
-    # Make empty lists for each of the searchables
-    moods = [] 
-    years = [] 
-    months = []
-    days = []
-
-    # Iterate over each of the dicts in the searchables list and append the individual lists 
-    for searchable in searchables:
-        # Append only distict items into each searchable
-        if searchable["mood"] not in moods:
-            moods.append(searchable["mood"])
-
-        if searchable["year"] not in years:
-            years.append(searchable["year"])
-
-        if searchable["month"] not in months: 
-            months.append(searchable["month"])
-
-        if searchable["day"] not in days:
-            days.append(searchable["day"])
+        return render_template("search_results.jinja", moods=moods, years=years, days=days, months=months )
 
     # Render the template and give the 'searchables'
     return render_template("search.html", moods=moods, years=years, days=days, months=months)
@@ -339,7 +339,7 @@ def delete():
     
     # flash a success message 
     flash("Your entry has been successfully deleted")
-    return redirect("/search")
+    return redirect("/home")
 
 @app.route("/results")
 @login_required
