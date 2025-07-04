@@ -22,7 +22,7 @@
             <select class="searchMenu" name="month">
                 <option selected disabled>Month</option>
                 {% for month in months %}
-                    <option value="{{ month }}"> {{ month }}</option>
+                    <option value="{{ month }}"> {{ month | getStringMonth }}</option>
                 {% endfor %}
                 <option value="month">All</option>
             </select>

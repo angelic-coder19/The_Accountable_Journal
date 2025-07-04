@@ -187,7 +187,6 @@ def login():
 def info():
     """ Query for all the Entries and allow for search operations """ 
 
-
     # When the page is simply requested, send the enties to frontend
     info = db.execute("""
                     SELECT entry, iv, mood, year, month, day, time
@@ -347,4 +346,36 @@ def delete():
 def results():
 
     return jsonify(search_results)
-    
+
+# A filter to make months more readable 
+def getStringMonth(month):
+    match month:
+        case 1:
+            return "January"
+        case 2: 
+            return "February"
+        case 3: 
+            return "March"
+        case 4:
+            return "April"
+        case 5:
+            return "May"
+        case 6:
+            return "June"
+        case 7:
+            return "July"
+        case 8:
+            return "August"
+        case 9:
+            return "September"
+        case 10:
+            return "October"
+        case 11:
+            return "November"
+        case 12:
+            return "December"
+        case _:
+            return month
+
+# Custom jinja filter to convert months in numbers to strings 
+app.jinja_env.filters["getStringMonth"] = getStringMonth
