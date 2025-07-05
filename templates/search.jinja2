@@ -7,58 +7,65 @@
 {% block main %}
 <div class="row text-center">
     <h2>Your Entries</h2>
-    
+</div>
+<div class="row">
+    <div class="col col-sm-6">
+        <h3>Search by: </h3>
+    </div>
+    <div class="col col-sm-6 text-end">
+    </div>            
 </div>
     <form action="/home" method="POST" id="searchForm">
-        <div class="row">
-        <div class="col col-sm-4">
-            <select class="searchMenu"  name="year">
-                <option selected disabled>Year</option>
-                {% for year in years %}
-                    <option value="{{ year }}">{{ year }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col col-sm-4">
-            <select class="searchMenu" name="month">
-                <option selected disabled>Month</option>
-                {% for month in months %}
-                    <option value="{{ month }}"> {{ month | getStringMonth }}</option>
-                {% endfor %}
-                <option value="month">All</option>
-            </select>
-        </div>
-        <div class="col col-sm-4">
+        <div class="row text-center">
+            <div class="col col-sm-4 col-lg-2">
+                <select class="searchMenu"  name="year">
+                    <option selected disabled>Year</option>
+                    {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col col-sm-4 col-lg-2">
+                <select class="searchMenu" name="month">
+                    <option selected disabled>Month</option>
+                    {% for month in months %}
+                        <option value="{{ month }}"> {{ month | getStringMonth }}</option>
+                    {% endfor %}
+                    <option value="month">All</option>
+                </select>
+            </div>
+            <div class="col col-sm-4 col-lg-2">
 
-            <select class="searchMenu" name="day">
-                <option selected disabled>Day</option>
-                {% for day in days %}
-                    <option value="{{ day }}">{{ day }}</option>
-                {% endfor %}
-                <option value="day">All</option>
-            </select>
-        </div>
-        <div class="col col-sm-4">
-            <select class="searchMenu" name="mood">
-                <option selected disabled>Mood</option>
-                {% for mood in moods %}
-                    <option value="{{ mood }}">{{ mood }}</option>
-                {% endfor %}
-                <option value="mood">All</option>
-            </select>
-        </div>
-        </div>
-        <div class="row">
-        <div class="col col-sm-4">
-        </div>
-        <div class="col col-sm-6 text-end">
-        <button class="btn" type="submit"><img src="/static/icons/search_icon.svg"/></button>
+                <select class="searchMenu" name="day">
+                    <option selected disabled>Day</option>
+                    {% for day in days %}
+                        <option value="{{ day }}">{{ day }}</option>
+                    {% endfor %}
+                    <option value="day">All</option>
+                </select>
+            </div>
+            <div class="col col-sm-4 col-lg-2">
+                <select class="searchMenu" name="mood">
+                    <option selected disabled>Mood</option>
+                    {% for mood in moods %}
+                        <option value="{{ mood }}">{{ mood }}</option>
+                    {% endfor %}
+                    <option value="mood">All</option>
+                </select>
+            </div>
+            <div class="col col-sm-4 col-lg-2 text-start">
+                <a href="/make_entry" id="makeEntry" id="entryLink" style="text-decoration: none; color: black">
+                    <img src="/static/icons/entry_icon.svg" class="icon"/>
+                    New Entry
+                </a>
+            </div>
+            <div class="col col-sm-6 col-lg-2 text-end">
+            <button class="btn" type="submit"><img src="/static/icons/search_icon.svg"/></button>
         </div>   
     </div>
     </form>
+    <div class="row my-0.5" id="mainBody" style="border: 2px solid #ff0000">
     {% block entries %}
-        <div id="mainBody">
-            <!-- Java Scipt will render the rest -->
-        </div>
     {% endblock %}
+    </div>
 {% endblock %}

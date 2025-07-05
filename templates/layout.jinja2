@@ -15,21 +15,32 @@
         </title>
     </head>
     <body>
-        <nav class="navbar navbar-exapnd-lg bg-body-tertiary" id="navigation-bar">
-            <div class="container-fluid brandContainer text-start">
-                <div class="col col-lg-10 col-sm-4">
-                    <a class="navbar-brand" href="/search"><span id="brand">The Accountable Journal</span></a>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navigation-bar">
+            <div class="container-fluid">
+                <div class="col col-lg-8">
+                    <a class="navbar-brand" href="/home"><span id="brand">The Accountable Journal</span></a>
                 </div>
-                <div class="col col-lg-2 col-sm-8">
-                    <img class="icon" src="/static/icons/menu_icon.svg" class="navbar-toggler" role="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="cursor: pointer;"/>
-                </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <img src="/static/icons/menu_icon.svg" class="icon" alt="menu" />
+                    </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link active" aria-current="page" href="/home"><img  class="icon" src="/static/icons/home_icon.svg" ><br>Home</a>
-                        <a class="nav-link" href="#"><img class="icon" src="/static/icons/analytics_icon.svg"/><br>Analytics</a>
-                        <a class="nav-link" href="/search"><img class="icon" src="/static/icons/search_icon.svg"/><br>Search</a>
-                        <a class="nav-link" href="#"><img class="icon" src="/static/icons/edit_notification_icon.svg"/><br>Customize</a>
-                        <a class="nav-link" href="/logout"><img class="icon" src="/static/icons/logout_icon.svg"/><br>Logout</a>
+                        <a class="nav-link active px-4" aria-current="page" href="/home">
+                            <img  class="icon" src="/static/icons/home_icon.svg" ><br>Home
+                        </a>
+                        <a class="nav-link px-4" href="#">
+                            <img class="icon" src="/static/icons/analytics_icon.svg"/><br>Analytics
+                        </a>
+                        <a class="nav-link px-4" href="/home">
+                            <img class="icon" src="/static/icons/search_icon.svg"/><br>Search
+                        </a>
+                        <a class="nav-link px-4" href="#">
+                            <img class="icon" src="/static/icons/edit_notification_icon.svg"/><br>Customize
+                        </a>
+                        <a class="nav-link px-4" href="/logout">
+                            <img class="icon" src="/static/icons/logout_icon.svg"/><br>Logout
+                        </a>
                     </div>
                 </div>
             </div>

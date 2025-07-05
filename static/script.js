@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             case 'Angry':
                 return "#f40a04"; // bright red 
             case 'Calm':
-                return "#a7ffeb";
+                return "#47ffeb";
             case 'Anxious':
                 return "#ef8a8a";
             case 'Anxious':
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             // Iterate over each json object and collect info
             for (let entry of entries){
                 let day = entry["day"];
-                let month = getStringDate(entry["month"]); // Convert the integar date to human readalbe month
+                let month = entry["month"]; // Convert the integar date to human readalbe month
                 let time = entry["time"];
                 let year = entry["year"];
                 let cipherEntry = entry["entry"]; // Base 64 string encrypted Entry 
@@ -140,27 +140,27 @@ document.addEventListener('DOMContentLoaded', async function(){
                 const plainText = new TextDecoder().decode(decryptedBuffer);
                 
                 // Dyanmically generat card to display a single entry and it's information
-                body.innerHTML += `<div class="row my-0.5">
-                            <div class="col infoCard col-lg-8 col-sm-12" style="background-color: ${getBGcolor(mood)}">
-                            <div class="row">
-                                <div class="col text-start col-lg-6 col-sm-8">
-                                    <p>${String(day) + ordinalIndicator(day) + " "+ month + ", " + year}<p>
+                body.innerHTML += `<div class="col col-sm-12 col-lg-3 infoCard">
+                            <div class="col infoBody" style="background-color: ${getBGcolor(mood)}">
+                                <div class="row">
+                                    <div class="col text-start col-lg-6 col-sm-8">
+                                        <p>${String(day) + ordinalIndicator(day) + " "+ getStringDate(month) + ", " + year}<p>
+                                    </div>
+                                    <div class="col text-end col-lg-6 col-sm-8">
+                                        <p class="time">${time}</p>
+                                    </div>
                                 </div>
-                                <div class="col text-end col-lg-6 col-sm-8">
-                                    <p class="time">${time}</p>
+                                <div class="row text-center entry">
+                                    <p>${plainText}</p>
                                 </div>
-                            </div>
-                            <div class="row text-center entry">
-                                <p>${plainText}</p>
-                            </div>
-                            <div class="row">
-                                <div class="col text-start binIcon">
-                                    <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
+                                <div class="row">
+                                    <div class="col text-start binIcon">
+                                        <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
+                                    </div>
+                                    <div class="col text-end">
+                                        <p> Feeling <b class="mood">${mood}</b></p>
+                                    </div>
                                 </div>
-                                <div class="col text-end">
-                                    <p> Feeling <b class="mood">${mood}</b></p>
-                                </div>
-                            </div>
                             </div>
                         </div>`    
             }
@@ -257,9 +257,10 @@ document.addEventListener('DOMContentLoaded', async function(){
             // Convert the encryptedEntry and iv to Base64
             const base64string = bytesTobase64(encryptedEntry);
             const base64IV = bytesTobase64(IV);
+            console.log(base64string)
 
             // Send the ecrypted entry, iv and mood to the database on the server    
-            const response = await fetch('/home', {
+            const response = await fetch('/make_entry', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -269,6 +270,12 @@ document.addEventListener('DOMContentLoaded', async function(){
                     iv : base64IV,
                     mood : mood })
             });
+
+            // Await a response from the front end to redirect
+            const result = await response.json();
+            if (result.status === "success"){
+                window.location.href = result.redirect;
+            }
         });
     } catch (TypeError) {
         console.log("Everything is fine🙂")

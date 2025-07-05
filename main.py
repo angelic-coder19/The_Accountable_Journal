@@ -130,7 +130,7 @@ def make_entry():
                         strftime('%H:%M', 'now')
                     )""", entry_id)   
         flash("Your entery has been added")
-        return redirect("/home")
+        return jsonify({'status': 'success', 'redirect': '/home'})
 
     # When the home page is reached
     return render_template("home.html")
@@ -306,14 +306,14 @@ def home():
         # Inform the user if no results are found
         if len(results) == 0:
             flash("No entries were found from your input")
-            return redirect("/home")
+            return redirect("/home")            
 
         # Append the results to the global array 
         search_results = results
-        return render_template("search_results.jinja", moods=moods, years=years, days=days, months=months )
+        return render_template("search_results.jinja2", moods=moods, years=years, days=days, months=months )
 
     # Render the template and give the 'searchables'
-    return render_template("search.html", moods=moods, years=years, days=days, months=months)
+    return render_template("search.jinja2", moods=moods, years=years, days=days, months=months)
 
 @app.route("/delete", methods=['POST'])
 @login_required
