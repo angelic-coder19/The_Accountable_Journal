@@ -140,29 +140,31 @@ document.addEventListener('DOMContentLoaded', async function(){
                 const plainText = new TextDecoder().decode(decryptedBuffer);
                 
                 // Dyanmically generat card to display a single entry and it's information
-                body.innerHTML += `<div class="col col-sm-12 col-lg-3 infoCard">
-                            <div class="col infoBody" style="background-color: ${getBGcolor(mood)}">
-                                <div class="row">
-                                    <div class="col text-start col-lg-6 col-sm-8">
-                                        <p>${String(day) + ordinalIndicator(day) + " "+ getStringDate(month) + ", " + year}<p>
-                                    </div>
-                                    <div class="col text-end col-lg-6 col-sm-8">
-                                        <p class="time">${time}</p>
-                                    </div>
-                                </div>
-                                <div class="row text-center entry">
-                                    <p>${plainText}</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col text-start binIcon">
-                                        <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
-                                    </div>
-                                    <div class="col text-end">
-                                        <p> Feeling <b class="mood">${mood}</b></p>
-                                    </div>
-                                </div>
+                body.innerHTML += `
+                <div class="col-lg-3 col-sm-12 p-0 my-0.5">
+                    <div class="infoCard" style="background-color: ${getBGcolor(mood)}">
+                        <div class="row">
+                            <div class="col text-start">
+                                <p>${String(day) + ordinalIndicator(day)} ${getStringDate(month)}, ${year}</p>
                             </div>
-                        </div>`    
+                            <div class="col text-end">
+                                <p class="time">${time}</p>
+                            </div>
+                            </div>
+                            <div class="row text-center entry">
+                                <p>${plainText}</p>
+                            </div>
+                            <div class="row">
+                            <div class="col text-start binIcon">
+                                <img src="/static/icons/delete_icon.svg" class="deleteIcon"/>
+                            </div>
+                            <div class="col text-end">
+                                <p>Feeling <b class="mood">${mood}</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `    
             }
         } catch (TypeError) {
             console.log("Everything is fine🙂");
