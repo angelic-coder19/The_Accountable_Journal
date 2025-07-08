@@ -379,3 +379,26 @@ def getStringMonth(month):
 
 # Custom jinja filter to convert months in numbers to strings 
 app.jinja_env.filters["getStringMonth"] = getStringMonth
+
+
+"""
+STATS 
+- Overall number of entries made by a user.
+    * Query for the all the entries made by that user
+    * Something like COUNT (*) AS num_entries
+
+- Pie chart showing percentage of entries by mood
+    * Learn the graph JavaScript Library that does visualization:
+    * Feed this library with the all the moods by that user: 
+    * something like SELECT mood FROM entries
+
+- Most verbose or Consise or detailed entry
+    * We can do this in two ways, on the frontend with a function 
+        in Javascrip that can count the number of words
+    * Or we can cleanly find the longest entry in the database and select just that entry
+    * Something like SELECT entry FROM entries WHERE (some condition to check for the longest sentence)
+
+- Most expressive day
+    * This one could be done best on the frontend after encryption has happended
+    * A JavaScript Algorithm can check how many emojis an entry has 
+"""
