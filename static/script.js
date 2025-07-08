@@ -316,8 +316,12 @@ document.addEventListener('DOMContentLoaded', async function(){
 
         renderEntries(entries, '#mainBody');
 
+        // Find the number of entries in the info JSON 
+        let entryCount = Object.keys(entries).length;
+
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
+    
         for (let deleteButton of deleteButtons){
             deleteButton.addEventListener('click', function (event){
                 // Find which button was clicked
@@ -343,6 +347,6 @@ document.addEventListener('DOMContentLoaded', async function(){
 
                 // Delete the entry card client side
                 card.remove();
-            });
+            });        
         }
 }); 

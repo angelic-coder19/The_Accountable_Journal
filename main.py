@@ -401,4 +401,12 @@ STATS
 - Most expressive day
     * This one could be done best on the frontend after encryption has happended
     * A JavaScript Algorithm can check how many emojis an entry has 
+
+    
+It is best if all this info is passed in a single JSON object once
+check if JSON can have child object within.
+ - Yes JSON can have baby JSON perfect for this
+ - Use a single python list called "stats" this object will have 4 fields to begin with
+   * first key value pair is for number of commments first
+        It is better to find the 
 """
