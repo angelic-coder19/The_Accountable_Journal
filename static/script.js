@@ -349,4 +349,12 @@ document.addEventListener('DOMContentLoaded', async function(){
                 card.remove();
             });        
         }
+        
+        // Everything statisticall will be done here 
+        try {
+            document.querySelector("#entryCount").innerHTML = `You have made ${entryCount} entries `;
+
+        } catch (TypeError) {
+            console.log("Everthing is fine, not on stats page yet🙂")
+        }
 }); 
