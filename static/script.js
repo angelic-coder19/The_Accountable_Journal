@@ -351,10 +351,34 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
         
         // Everything statisticall will be done here 
-        try {
-            document.querySelector("#entryCount").innerHTML = `You have made ${entryCount} entries `;
+        try { 
+            document.querySelector("#entryCount").innerHTML = `You have made ${entryCount} entries`;
 
+            const ctx = document.getElementById("pieChart");            
+            const statsResponse = await fetch("/stats");
+            const stats = await statsResponse.json();
+        
+            const config = {
+                type: 'doughnut',
+                data:{
+                    labels: stats.moods,
+                    datasets: [{
+                        labels: stats.moods,
+                        data: stats.times,
+                        backgroundColor: [
+                            '#ff6384',
+                            '#36a2eb',
+                            '#abc0c0',
+                            '#00fed0',
+                            '#8235e0'
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            };
+            
+            new Chart(ctx, config);
         } catch (TypeError) {
             console.log("Everthing is fine, not on stats page yet🙂")
-        }
+        } 
 }); 
