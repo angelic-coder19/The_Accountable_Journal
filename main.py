@@ -408,5 +408,37 @@ check if JSON can have child object within.
  - Yes JSON can have baby JSON perfect for this
  - Use a single python list called "stats" this object will have 4 fields to begin with
    * first key value pair is for number of commments first
-        It is better to find the 
+        It is better to find the entry count on the client side for more dymanism 
+   * first key value pair will be a baby JSON object called "moods" to store all the moods 
+        This object will collect all the number of instances of each mood 
+        * It will all come from a query that aggregates all the moods 
+        * This then will be the baby json object called moods that will be ready fro rendering
+
 """
+
+@app.route("/stats")
+@login_required
+def stats():
+
+    # Query for the numbers of each of the moods that user has 
+    information = db.execute("""
+                SELECT mood, COUNT(mood) AS times 
+                FROM entries
+                WHERE author_id = ?
+                GROUP BY mood""", session["user_id"]
+    )
+    
+    # Stats dict to store each mood and corresponding count
+    stats = {"moods": [], "times":[]}
+    for info in information:
+        stats["moods"].append(info["mood"])
+        stats["times"].append(info["times"])
+ 
+    return jsonify(stats)   
+
+@app.route("/analytics")
+@login_required
+def analytics():
+    # Simply render the analytics template
+
+    return render_template("analytics.jinja2")
