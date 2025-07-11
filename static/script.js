@@ -107,9 +107,24 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
         return btoa(binaryString);
     }
+    async function decryptEntry(cipherEntry, iv){
+        // Decrypt the encrypted message
+        let encryptedBytes = base64ToBytes(cipherEntry);
+        let ivBytes = base64ToBytes(iv);
+
+        let decryptedBuffer = await crypto.subtle.decrypt(
+            {
+                name: "AES-GCM", 
+                iv: ivBytes
+            },
+            cryptoKey,
+            encryptedBytes
+        ); 
+        const plainText = new TextDecoder().decode(decryptedBuffer);
+        return plainText;
+    }
 
     async function renderEntries(entries, id) {
-
     try {
         // Find the body object from the DOM
         var body = document.querySelector(`${id}`); 
@@ -124,22 +139,10 @@ document.addEventListener('DOMContentLoaded', async function(){
                 let iv = entry["iv"];             // Base 64 string initialization vector
                 let mood = entry["mood"];
 
-                // Decrypt the encrypted message
-                let encryptedBytes = base64ToBytes(cipherEntry);
-                let ivBytes = base64ToBytes(iv);
-
-                let decryptedBuffer = await crypto.subtle.decrypt(
-                    {
-                        name: "AES-GCM", 
-                        iv: ivBytes
-                    },
-                    cryptoKey,
-                    encryptedBytes
-                ); 
-
-                const plainText = new TextDecoder().decode(decryptedBuffer);
-                
-                // Dyanmically generat card to display a single entry and it's information
+                // Get the plain text from decyrption function
+                const plainText = await decryptEntry(cipherEntry, iv);
+    
+                // Dyanmically generate card to display a single entry and it's information
                 body.innerHTML += `
                 <div class="col-lg-3 col-sm-12 p-0 my-0.5">
                     <div class="infoCard" style="background-color: ${getBGcolor(mood)}">
@@ -352,7 +355,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         
         // Everything statisticall will be done here 
         try { 
-            document.querySelector("#entryCount").innerHTML = `You have made ${entryCount} entries`;
+            document.querySelector("#entryCount").innerHTML += `<div class="col text-start py-2" style="font-size: large"> Total Entries: <span class="stat"> ${entryCount} </span></div>`;
 
             const ctx = document.getElementById("pieChart");            
             const statsResponse = await fetch("/stats");
@@ -373,12 +376,32 @@ document.addEventListener('DOMContentLoaded', async function(){
                         labels: stats.moods,
                         data: stats.times,
                         backgroundColor: colors, // Use of dynamically generated array for colors
-                        hoverOffset: 10
+                        hoverOffset: 10,
+                        spacing: 0,
+                        borderDashOffset: 3,
+                        weight: 1,
+                        borderJoinStyle: 'miter'
                     }]
                 }
             };
             
             new Chart(ctx, config);
+            
+            // Find the number of words in the most verbose entry
+            const longestEntry = stats.longest_entry[0].entry;
+            const IV = stats.longest_entry[0].iv;
+            const longest_entry = await decryptEntry(longestEntry, IV);
+            let wordCount = 1;
+            for (let j = 0; j < longest_entry.length; j++){
+                if (longest_entry[j] == ' '){
+                    wordCount++;
+                }
+            }
+            // Add this word count for user to see
+            document.getElementById("wordCount").innerHTML += ` ${wordCount} words`;
+            
+            // Render the most verbose entry
+            renderEntries(stats.longest_entry,"#longestEntry");
         } catch (TypeError) {
             console.log("Everthing is fine, not on stats page yet🙂")
         }  
