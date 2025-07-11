@@ -6,12 +6,21 @@
 
 {% block main %}
     <h1>Entry Summary</h1>
-    <div class="row text-start" id="entryCount">
+    <div class="row text-start py-2" id="entryCount">
         <!-- JavaScript will add the number of entries here -->
     </div>
-    <div class="row text-center">
+    <div>
+        <div class="row text-start">
+            <div class="col" style="font-size: large">Your Entries by Mood:</div>
+        </div>
         <canvas id="pieChart">
             <!-- JavaScript will render the pie chart here -->
-        </canvas>                   `   
-    </div>  
+        </canvas>    
+    </div>
+    <div class="row text-start py-2">
+            <div class="col" id="wordCount" style="font-size: large">Most Expressive/Verbose Entry:</div>
+        </div>
+    <div class="row" id="longestEntry">
+            <!-- JavaScript will render longest entry here -->
+    </div>
 {% endblock %}
