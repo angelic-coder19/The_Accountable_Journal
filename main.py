@@ -388,7 +388,7 @@ STATS
     * Something like COUNT (*) AS num_entries
 
 - Pie chart showing percentage of entries by mood
-    * Learn the graph JavaScript Library that does visualization:
+    * Learn chart JavaScript Library that does visualization:
     * Feed this library with the all the moods by that user: 
     * something like SELECT mood FROM entries
 
@@ -429,10 +429,26 @@ def stats():
     )
     
     # Stats dict to store each mood and corresponding count
-    stats = {"moods": [], "times":[]}
+    stats = {"moods": [], "times":[], "longest_entry": []}
     for info in information:
         stats["moods"].append(info["mood"])
         stats["times"].append(info["times"])
+
+    # Find the longest entry from the database 
+    longest_entry = db.execute("""
+            SELECT entry, iv, mood, year, month, day, time
+            FROM entries
+            JOIN dates ON entries.id = dates.entry_id
+            WHERE LENGTH(entries.entry) = (
+                SELECT MAX(LENGTH(entry)) 
+                FROM entries 
+                WHERE author_id = ?
+            )
+    """, session["user_id"]                           
+    )[0]
+
+    # Add the longest entry to the stas json object
+    stats["longest_entry"].append(longest_entry)
  
     return jsonify(stats)   
 
