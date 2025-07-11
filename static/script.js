@@ -358,6 +358,13 @@ document.addEventListener('DOMContentLoaded', async function(){
             const statsResponse = await fetch("/stats");
             const stats = await statsResponse.json();
         
+            // Dynamically get the theme colors of each mood using the getBGcolor function 
+            const colors = new Array(stats.moods.length);
+            for (let i = 0; i < stats.moods.length; i++){
+                // Populate colors array with the custom color for each mood
+                colors[i] = getBGcolor(stats.moods[i]); 
+            }
+            
             const config = {
                 type: 'doughnut',
                 data:{
@@ -365,14 +372,8 @@ document.addEventListener('DOMContentLoaded', async function(){
                     datasets: [{
                         labels: stats.moods,
                         data: stats.times,
-                        backgroundColor: [
-                            '#ff6384',
-                            '#36a2eb',
-                            '#abc0c0',
-                            '#00fed0',
-                            '#8235e0'
-                        ],
-                        hoverOffset: 4
+                        backgroundColor: colors, // Use of dynamically generated array for colors
+                        hoverOffset: 10
                     }]
                 }
             };
@@ -380,5 +381,5 @@ document.addEventListener('DOMContentLoaded', async function(){
             new Chart(ctx, config);
         } catch (TypeError) {
             console.log("Everthing is fine, not on stats page yet🙂")
-        } 
+        }  
 }); 
