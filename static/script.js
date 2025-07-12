@@ -224,7 +224,6 @@ document.addEventListener('DOMContentLoaded', async function(){
                     words++;
                 }
             }
-            console.log(words);
         });
     } catch (TypeError) {
         console.log("Everything is fine🙂");
@@ -365,9 +364,12 @@ document.addEventListener('DOMContentLoaded', async function(){
             const colors = new Array(stats.moods.length);
             for (let i = 0; i < stats.moods.length; i++){
                 // Populate colors array with the custom color for each mood
-                colors[i] = getBGcolor(stats.moods[i]); 
+                colors[i] = getBGcolor(stats.moods[i]);
+
+                // Calculate the percntage of each mood
+                stats.moods[i] += " " + Math.round((stats.times[i]/entryCount) * 100) + "%";
             }
-            
+            console.log(stats.times[3]/entryCount * 100);
             const config = {
                 type: 'doughnut',
                 data:{
@@ -381,7 +383,12 @@ document.addEventListener('DOMContentLoaded', async function(){
                         borderDashOffset: 3,
                         weight: 1,
                         borderJoinStyle: 'miter'
-                    }]
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true, 
+                    aspectRatio: 1,
                 }
             };
             
