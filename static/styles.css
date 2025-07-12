@@ -5,6 +5,16 @@
     font-family: 'Rancho';
     font-size: 200%;
 }
+@media screen and (max-width: 500px){
+    #brand {
+        font-size: 35px;
+    }
+}
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
 
 .navbar-toggler:focus,
 .navbar-toggler:active { 
@@ -64,4 +74,14 @@ textarea:focus {
 }
 a {
     text-decoration: none;
+}
+.chart-container {
+    position: relative;
+    max-width: 600px;
+    margin: auto;
+}
+.loginButton {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
 }
