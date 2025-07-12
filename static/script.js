@@ -359,7 +359,13 @@ document.addEventListener('DOMContentLoaded', async function(){
             const ctx = document.getElementById("pieChart");            
             const statsResponse = await fetch("/stats");
             const stats = await statsResponse.json();
-        
+
+            // Find the most frequent mood by iterating over each frequency in the times array
+            const index = stats.times.indexOf(Math.max(...stats.times));
+            // Get the mood from moods array using the index
+            const mostCommon = stats.moods[index];
+            document.querySelector("#mostCommon").innerHTML += " " + mostCommon;
+
             // Dynamically get the theme colors of each mood using the getBGcolor function 
             const colors = new Array(stats.moods.length);
             for (let i = 0; i < stats.moods.length; i++){
@@ -367,9 +373,8 @@ document.addEventListener('DOMContentLoaded', async function(){
                 colors[i] = getBGcolor(stats.moods[i]);
 
                 // Calculate the percntage of each mood
-                stats.moods[i] += " " + Math.round((stats.times[i]/entryCount) * 100) + "%";
+                stats.moods[i] += " - " + Math.round((stats.times[i]/entryCount) * 100) + "%";
             }
-            console.log(stats.times[3]/entryCount * 100);
             const config = {
                 type: 'doughnut',
                 data:{
