@@ -8,15 +8,28 @@
     <div class="row text-center">
        <p>{{ error }} </p>
     </div>
-    <div class = "row text-center">
+    <div class = "row">
             <h1>Sign Up to start you journaling journey today!</h1>
             <form action="/" method="POST">
-                <input type="text" placeholder="Psuedo Name" requrired autofocus name="name"><br><br>
-                <input type="email" placeholder="Email" required name="email"><br><br>
-                <input type="password" placeholder="Password" required name="password"><br><br>
-                <input type="password" placeholder="Confirm password" required name="confirmation"><br><br>
-                <button type="submit">Sign up</button>
+                <div class="mb-3">
+                    <label for="name" class="form-label" aria-describedby="">Psuedo Name:</label>
+                    <input type="text" id="name" class="form-control" requrired autofocus name="name">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label" >Email:</label>
+                    <input type="email" id="email" class="form-control"  required name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="password" required class="form-control" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="confirmation" class="form-label">Confirm password:</label> 
+                    <input type="password" class="form-control" id="confirmation" required name="confirmation">
+                </div>
+                <button type="submit" class="btn btn-secondary loginSignupBtn">Sign up</button>
+                Already have an Account?
+                <a href="/login" class="loginButton"><img class="icon" src="/static/icons/login_icon.svg"/>login</a>
             </form>
-            <a href="/login"><img src="/static/icons/login_icon.svg"/>login</a>
     </div>
 {% endblock %}
