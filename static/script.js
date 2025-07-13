@@ -316,15 +316,65 @@ document.addEventListener('DOMContentLoaded', async function(){
         let response = await fetch("/info");
         let entries = await response.json(); // Get a list of json objects from each entry
 
-        await renderEntries(entries, '#mainBody');
+        const body = document.getElementById("mainBody");
 
+    try {
+        // Show placeholders 
+        for (let j = 0; j <  4; j++) {
+            body.innerHTML += `
+            <div class="col-lg-3 col-sm-12 p-0 my-0.5 placeholder-card">
+            <div class="card placeholder-glow p-2 m-1" style="outline: none">
+                <div class="row">
+                <div class="col text-start">
+                    <p class="placeholder col-6"></p>
+                </div>
+                <div class="col text-end">
+                    <p class="placeholder col-4"></p>
+                </div>
+                </div>
+                <div class="row text-center entry">
+                    <p class="placeholder-text">
+                        <span class="placeholder col-2"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-5"></span>
+                        <span class="placeholder col-5"></span>
+                        <span class="placeholder col-3"></span>
+                        <span class="placeholder col-3"></span>
+                        <span class="placeholder col-1"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-2"></span>
+                        <span class="placeholder col-3"></span>
+                    </p>
+                </div>
+                <div class="row">
+                <div class="col placeholder-wave">
+                    <span class="placeholder col-3"></span>
+                </div>
+                <div class="col text-end">
+                    <p class="placeholder col-6"></p>
+                </div>
+                </div>
+            </div>
+            </div>
+            `
+        }
+            const delay = 1570; // Delay to render entries in miliseconds
+            setTimeout(async () => {
+                // Clear the placholders 
+                body.innerHTML = "";
+
+                // Fetch the actual entries and render them
+                await renderEntries(entries, '#mainBody');
+            }  , delay)
+        } catch(TypeError){
+            console.log("Everything is Fine🙂, search page loaded")
+        }
         // Find the number of entries in the info JSON 
         let entryCount = Object.keys(entries).length;
 
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
-        console.log(deleteButtons);
-    
+        
         for (let deleteButton of deleteButtons){
             deleteButton.addEventListener('click', function (event){
                 // Find which button was clicked
@@ -336,7 +386,6 @@ document.addEventListener('DOMContentLoaded', async function(){
                 // API to delete the entry from the database 
                 const time = card.querySelector('.time').innerHTML;
                 const mood = card.querySelector('.mood').innerHTML;
-                console.log(time, mood);
 
                 fetch("/delete",{
                     method: "POST", 
