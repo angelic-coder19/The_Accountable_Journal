@@ -5,12 +5,20 @@
 {% endblock %}
 
 {% block main %}
-<div class="row text-center">
-    <h2>Pick up where you left off!<br>login</h2>
+<div class="row">
+    <h1>Pick Up Where you left off!<br>Sign in</h1>
     <form action="/login" method="POST">
-        <input name="email" autofocus type="email" required placeholder="Email"><br><br>
-        <input name="password" type="password" required placeholder="Password"><br><br>
-        <button type="submit">login</button> <p>{{ error }}</p>
+        <div class="mb-3">
+            <label for="email" class="form-label" >Email:</label>
+            <input type="email" id="email" class="form-control"  required name="email">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" class="form-control" id="password" required class="form-control" name="password">
+        </div>
+        <button type="submit" class="btn btn-secondary loginSignupBtn">Sign in</button><br>
+        Don't have an Account?
+        <a href="/" class="loginButton"><img class="icon" src="/static/icons/register_icon.svg"/>Register</a>
     </form>
 </div>
 
