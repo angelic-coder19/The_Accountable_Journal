@@ -11,15 +11,19 @@
     </div>
     <div class="chart-container">
         <div class="row text-start">
-            <div class="col" style="font-size: large">Your Entries by Mood:</div>
+            <div class="col stat">
+                Entries by Mood:
+            </div>
         </div>
         <canvas id="pieChart">
             <!-- JavaScript will render the pie chart here -->
         </canvas>    
     </div>
-    <div class="col col-sm-12 py-2" id="mostCommon" style="font-size: large">Most Common Mood:</div>
+    <div class="col col-sm-12 py-2 stat" id="mostCommon">
+        Most Common Mood:
+    </div>
     <div class="row text-start py-2">
-            <div class="col col-sm-12" id="wordCount" style="font-size: large">Most Expressive/Verbose Entry:</div>
+            <div class="col col-sm-12 stat" id="wordCount">Most Verbose Entry:</div>
         </div>
     <div class="row" id="longestEntry">
             <!-- JavaScript will render longest entry here -->

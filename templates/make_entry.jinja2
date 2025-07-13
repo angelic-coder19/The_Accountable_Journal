@@ -1,0 +1,91 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+<div class="row text-center py-5">
+    <h2>Make an entry</h2>
+        <div class="col">
+            <textarea id="entry" type="text" name="entry" autofocus autocomplete="off" placeholder="Dear Journal..."></textarea>
+        </div>
+        <h3>How are you feeling?</h3>
+        <div class="row text-start py-2 mx-2">
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio1" value="Happy" required>
+                    <label class="form-check-label" for="inlineRadio"><span class="emoji">😄</span>Happy</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio2" value="Sad">
+                    <label class="form-ceck-label" for="inlineRadio"><span class="emoji">😔</span>Sad</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio3" value="Calm">
+                    <label class="form-check-label" for="inlinRadio3"><span class="emoji">🙂</span>Calm</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio4" value="Angry">
+                    <label class="form-check-label" for="inlinRadio4"><span class="emoji">😠</span>Angry</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio5" value="Anxious">
+                    <label class="form-check-label" for="inlinRadio5"><span class="emoji">😟</span>Anxious</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio6" value="Confident">
+                    <label class="form-check-label" for="inlinRadio6"><span class="emoji">😎</span>Confident</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio7" value="Hopeful">
+                    <label class="form-check-label" for="inlinRadio7"><span class="emoji">😇</span>Hopeful</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio8" value="Tired">
+                    <label class="form-check-label" for="inlinRadio8"><span class="emoji">😩</span>Tired</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio9" value="Grateful">
+                    <label class="form-check-label" for="inlinRadio9"><span class="emoji">😊</span>Grateful</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio10" value="Lonely">
+                    <label class="form-check-label" for="inlinRadio10"><span class="emoji">😞</span>Lonely</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio11" value="Inspired">
+                    <label class="form-check-label" for="inlinRadio11"><span class="emoji">🤓</span>Inspired</label>
+                </div>
+            </div>
+            <div class="col col-lg-1 col-sm-4">           
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mood" id="inlineRadio12" value="Meh">
+                    <label class="form-check-label" for="inlinRadio12"><span class="emoji">😐</span>Meh</label>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <button class="btn" id="submit"><img class="icon" src="/static/icons/save_icon.svg"/><br>Save</button>    
+    </div>
+{% endblock %}

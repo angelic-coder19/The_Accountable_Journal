@@ -133,7 +133,7 @@ def make_entry():
         return jsonify({'status': 'success', 'redirect': '/home'})
 
     # When the home page is reached
-    return render_template("home.html")
+    return render_template("make_entry.jinja2")
 
 @app.route("/logout")
 @login_required
@@ -142,7 +142,8 @@ def logout():
     session.clear()
     
     #Redirect to register page
-    return redirect("/")
+    flash("You were Successfully logged out <br> Goodbye")
+    return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

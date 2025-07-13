@@ -405,7 +405,9 @@ document.addEventListener('DOMContentLoaded', async function(){
         
         // Everything statisticall will be done here 
         try { 
-            document.querySelector("#entryCount").innerHTML += `<div class="col text-start py-2" style="font-size: large"> Total Entries: <span class="stat"> ${entryCount} </span></div>`;
+            document.querySelector("#entryCount").innerHTML += `<div class="col text-start py-2 stat"> 
+                                                                    Total Entries: <span class="statistic"> ${entryCount} </span>
+                                                                </div>`;
 
             const ctx = document.getElementById("pieChart");            
             const statsResponse = await fetch("/stats");
@@ -415,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             const index = stats.times.indexOf(Math.max(...stats.times));
             // Get the mood from moods array using the index
             const mostCommon = stats.moods[index];
-            document.querySelector("#mostCommon").innerHTML += " " + mostCommon;
+            document.querySelector("#mostCommon").innerHTML += ` <span class="statistic"    >${mostCommon}</span>`;
 
             // Dynamically get the theme colors of each mood using the getBGcolor function 
             const colors = new Array(stats.moods.length);
@@ -461,7 +463,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                 }
             }
             // Add this word count for user to see
-            document.getElementById("wordCount").innerHTML += ` ${wordCount} words`;
+            document.getElementById("wordCount").innerHTML += `<span class="statistic"> ${wordCount} words </span>`;
             
             // Render the most verbose entry
             renderEntries(stats.longest_entry,"#longestEntry");

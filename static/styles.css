@@ -5,7 +5,7 @@
     font-family: 'Rancho';
     font-size: 200%;
 }
-@media screen and (max-width: 300px){
+@media screen and (max-width: 400px){
     #brand {
         font-size: 35px;
     }
@@ -84,4 +84,10 @@ a {
     text-decoration: none;
     color: black;
     font-size: 20px;
+}
+.stat {
+    font-size: large;
+}
+.statistic {
+    font-weight: 700;
 }
