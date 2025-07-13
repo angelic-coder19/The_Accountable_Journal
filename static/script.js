@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                     <div class="infoCard" style="background-color: ${getBGcolor(mood)}">
                         <div class="row">
                             <div class="col text-start">
-                                <p>${String(day) + ordinalIndicator(day)} ${getStringDate(month)}, ${year}</p>
+                                <p>${day + ordinalIndicator(day)} ${getStringDate(month)}, ${year}</p>
                             </div>
                             <div class="col text-end">
                                 <p class="time">${time}</p>
@@ -316,13 +316,14 @@ document.addEventListener('DOMContentLoaded', async function(){
         let response = await fetch("/info");
         let entries = await response.json(); // Get a list of json objects from each entry
 
-        renderEntries(entries, '#mainBody');
+        await renderEntries(entries, '#mainBody');
 
         // Find the number of entries in the info JSON 
         let entryCount = Object.keys(entries).length;
 
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
+        console.log(deleteButtons);
     
         for (let deleteButton of deleteButtons){
             deleteButton.addEventListener('click', function (event){
@@ -330,12 +331,13 @@ document.addEventListener('DOMContentLoaded', async function(){
                 deleteButton = event.target;
                 
                 // Navigate up the DOM tree and delte that row
-                card = deleteButton.closest('.card');
+                card = deleteButton.closest('.infoCard');
 
                 // API to delete the entry from the database 
                 const time = card.querySelector('.time').innerHTML;
                 const mood = card.querySelector('.mood').innerHTML;
-                
+                console.log(time, mood);
+
                 fetch("/delete",{
                     method: "POST", 
                     headers: {
