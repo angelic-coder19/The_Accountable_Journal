@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             const index = stats.times.indexOf(Math.max(...stats.times));
             // Get the mood from moods array using the index
             const mostCommon = stats.moods[index];
-            document.querySelector("#mostCommon").innerHTML += ` <span class="statistic"    uu>${mostCommon}</span>`;
+            document.querySelector("#mostCommon").innerHTML += ` <span class="statistic">${mostCommon}</span>`;
 
             // Dynamically get the theme colors of each mood using the getBGcolor function 
             const colors = new Array(stats.moods.length);
