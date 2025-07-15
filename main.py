@@ -2,12 +2,28 @@ from cs50 import SQL
 from flask import Flask, flash, render_template, request, redirect, session, jsonify
 from flask_session import Session
 from functools import wraps
-import re
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from psycopg.rows import dict_row
+import re
+import os
+import psycopg
 
 
 # Configure appliaction
 app = Flask(__name__)
+
+# Create connection to Postgres DB using environemnt variables from .env file
+load_dotenv()
+
+conn = psycopg.connect(
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASS"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_POST"),
+    row_factory=dict_row  # This ensures we get back a list of dicts from queries
+)
 
 # Create connection to the database
 db = SQL("sqlite:///journal.db")
@@ -58,7 +74,7 @@ def index():
             error = "Enter a valide email"
 
         # Validate email by using the email regex
-        elif re.match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is None:
+        elif re.match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', email) is None:
             error = "Enter a valid email"
             return render_template("register.html", error = error)
         
@@ -77,24 +93,54 @@ def index():
         # Generate a hash of the password 
         passaword_hash = generate_password_hash(password)
 
+        """
         # Check if the a user with that email already exists 
         if db.execute("SELECT * FROM authors WHERE email = ?", email):
             error = "A user with " + email + " aready exists"
             return render_template("register.html", error=error)
-        
+        """
+
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM authors WHERE email = %s;", (email,))
+            user_email = cur.fetchone()
+        if user_email:
+            flash(f"A user with {email} already exists")
+            return redirect("/")
+        """
         # Check if the entered username is alredy used
         if db.execute("SELECT * FROM authors WHERE name = ?", name):
             error = "Username " + name + " is already taken"
             return render_template("register.html", error=error)
-
-        # If all is well register the user
-        db.execute("""
-                    INSERT INTO authors (name, email, password)
-                    VALUES (?, ?, ?)""", name, email.strip(), passaword_hash
-                  )
+        """
         
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM authors WHERE name = %s;", (name,))
+            inititial_user = cur.fetchone()
+        if inititial_user:
+            error = "A user with " + name + " is already taken "
+            return render_template("register.html", error=error)
+        """
+        # If all is well register the user
+        db.execute(""
+                    INSERT INTO authors (name, email, password)
+                    VALUES (?, ?, ?)"", name, email.strip(), passaword_hash
+                  )
+        """
+        with conn.cursor() as cur:
+            cur.execute("""
+                        INSERT INTO authors (name, email, password)
+                        VALUES (%s, %s, %s);""", (name, email.strip(), passaword_hash))
+            conn.commit() 
+        
+        """
         # Create a new session for the user 
         user_id = db.execute("SELECT id FROM authors WHERE name = ? AND email = ?", name, email.strip())[0]['id']
+        """
+
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM authors WHERE name = %s and email = %s;", (name, email.strip()))
+            user_id = cur.fetchone()["id"]
+
         session["user_id"] = user_id
 
         # Send success massage to the dashboard and redirect to homepage
@@ -117,19 +163,32 @@ def make_entry():
 
         # Enter the mood, author_id and iv of the new entry
         db.execute("INSERT INTO entries (author_id, entry, iv, mood) VALUES (?, ?, ?, ?)", user_id, entry, iv, mood)
-        
+        with conn.cursor() as cur:
+            cur.execute("INSERT INTO entries (author_id, entry, iv, mood) VALUES (%s, %s, %s, %s);", (user_id, entry, iv, mood))
+            conn.commit()
+
         # Enter the time of the entry
+        """
         entry_id = db.execute("SELECT id FROM entries WHERE iv = ? AND author_id = ?", iv, user_id)[0]['id']
-        db.execute("""
-                    INSERT INTO dates (entry_id, year, month, day, time)
-                    VALUES (
-                        ?,
-                        CAST(strftime('%Y', 'now') AS INTEGER),
-                        CAST(strftime('%m', 'now') AS INTEGER),
-                        CAST(strftime('%d', 'now') AS INTEGER),
-                        strftime('%H:%M', 'now')
-                    )""", entry_id)   
+        """
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM entries WHERE iv = %s AND author_id = %s;",
+                         (iv, user_id)
+            )
+            entry_id = cur.fetchone()["id"]
+        with conn.cursor() as cur:    
+            cur.execute("""
+                        INSERT INTO dates (entry_id, year, month, day, time)
+                        VALUES (
+                            %s,
+                            EXTRACT(YEAR FROM CURRENT_TIMESTAMP)::INTEGER,
+                            EXTRACT(MONTH FROM CURRENT_TIMESTAMP)::INTEGER,
+                            EXTRACT(DAY FROM CURRENT_TIMESTAMP)::INTEGER,
+                            TO_CHAR(CURRENT_TIMESTAMP, 'HH24:MI')
+                        );""", (entry_id,))
+            conn.commit()
         flash("Your entery has been added")
+        # Return redirect route after success
         return jsonify({'status': 'success', 'redirect': '/home'})
 
     # When the home page is reached
@@ -164,9 +223,14 @@ def login():
             return render_template("login.html", error=error)
 
         # Check if emails match
+        """
         rows = db.execute(
             "SELECT * FROM authors WHERE email = ?", email
         ) 
+        """
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM authors WHERE email = %s", (email,))
+            rows = cur.fetchall()
 
         # Ensure that the user exists and the password is correct
         if len(rows) != 1 or not check_password_hash(
@@ -189,8 +253,9 @@ def info():
     """ Query for all the Entries and allow for search operations """ 
 
     # When the page is simply requested, send the enties to frontend
-    info = db.execute("""
-                    SELECT entry, iv, mood, year, month, day, time
+    """
+    info = db.execute(""
+                    SELECT entry, iv, id, mood, year, month, day, time
                     FROM entries
                     JOIN dates ON entries.id = dates.entry_id
                     WHERE entries.id IN 
@@ -198,9 +263,37 @@ def info():
                         SELECT id 
                         FROM entries 
                         WHERE author_id = ?
-                    )
-                    ORDER BY id DESC""", session["user_id"]
+                    )"", 12
     )
+    """
+    index = 1
+    #for inf in info:
+    """
+    with conn.cursor() as cur:
+        cur.execute("INSERT INTO entries (entry, iv, mood, author_id) VALUES (%s, %s, %s, %s);",(inf["entry"], inf["iv"], inf["mood"], session["user_id"]))
+        conn.commit()
+    
+    with conn.cursor() as cur2:
+        cur2.execute("INSERT INTO dates (year, month, day, time, entry_id) VALUES (%s, %s, %s, %s, %s);", 
+                    (inf["year"], inf["month"], inf["day"], inf["time"], index))
+        conn.commit()
+    index += 1
+    """
+
+    with conn.cursor() as cur:
+        cur.execute("""
+                SELECT entry, iv, mood, year, month, day, time
+                FROM entries
+                JOIN dates ON entries.id = dates.entry_id
+                WHERE entries.id IN 
+                (
+                    SELECT id 
+                    FROM entries 
+                    WHERE author_id = %s
+                )
+                ORDER BY id DESC;""", (session["user_id"],)
+        )
+        info = cur.fetchall()
 
     return jsonify(info)
 
@@ -208,8 +301,12 @@ def info():
 @login_required
 def key():
     """ Send the encryption key to the frontend for use """
-
+    """
     key = db.execute("SELECT key FROM keys")[0]["key"]
+    """
+    with conn.cursor() as cur: 
+        cur.execute("SELECT key FROM keys;")
+        key = cur.fetchone()["key"]
 
     return jsonify(key)
 
@@ -220,7 +317,8 @@ def home():
     global search_results
     
     # Collect all the 'searchables' and make them ready to both templates
-    searchables = db.execute("""
+    """
+    searchables = db.execute(""
                     SELECT mood, year, month, day
                     FROM entries
                     JOIN dates ON entries.id = dates.entry_id
@@ -230,8 +328,24 @@ def home():
                         FROM entries 
                         WHERE author_id = ?
                     )
-                    ORDER BY id DESC""", session["user_id"]
+                    ORDER BY id DESC"", session["user_id"]
     )
+    """
+    with conn.cursor() as cur: 
+        cur.execute("""
+                    SELECT mood, year, month, day
+                    FROM entries
+                    JOIN dates ON entries.id = dates.entry_id
+                    WHERE entries.id IN 
+                    (
+                        SELECT id 
+                        FROM entries 
+                        WHERE author_id = %s
+                    )
+                    ORDER BY id DESC;""", (session["user_id"],)
+        )
+        searchables = cur.fetchall()
+
     # Make empty lists for each of the searchables
     moods = [] 
     years = [] 
@@ -272,48 +386,50 @@ def home():
             JOIN dates ON entries.id = dates.entry_id 
             WHERE entries.id IN (
                 SELECT id FROM entries 
-                WHERE author_id = ?
+                WHERE author_id = %s
             )   
         """
         values = [session["user_id"]]
 
         # Append filters conditionally 
         if year and year != 'year':
-            query += " AND year = ?"
+            query += " AND year = %s"
             values.append(int(year))
         else:
             query += " AND year = year"
 
         if month and month != 'month':
-            query += " AND month = ?"
+            query += " AND month = %s"
             values.append(int(month))
         else:
             query += " AND month = month"
         
         if day and day != 'day':
-            query += " AND day = ?"
+            query += " AND day = %s"
             values.append(int(day))
         else: 
             query += " AND day = day"
 
         if mood:
-            query += " AND mood = ?"
+            query += " AND mood = %s"
             values.append(mood)
         else:
             query += " AND mood = mood"
         
-        results = db.execute(query, *values)   
+        with conn.cursor() as cur:
+            cur.execute(query + ";", values)
+            results = cur.fetchall()   
         
         # Inform the user if no results are found
         if len(results) == 0:
-            flash("No entries were found from your input")
+            flash("No entries were found from your search parameters")
             return redirect("/home")            
 
         # Append the results to the global array 
         search_results = results
         return render_template("search_results.jinja2", moods=moods, years=years, days=days, months=months )
 
-    # Render the template and give the 'searchables'
+    # If page id accessed via GET, Render the template and give the 'searchables'
     return render_template("search.jinja2", moods=moods, years=years, days=days, months=months)
 
 @app.route("/delete", methods=['POST'])
@@ -323,21 +439,37 @@ def delete():
     time = request.get_json()["del_time"]
     mood = request.get_json()["del_mood"]
 
+    """
     # Get the id of the entry given the inforamtion from the frontend
-    id = db.execute(f"""
+    id = db.execute(f""
         SELECT id 
         FROM entries
         WHERE mood = ? AND author_id = {session["user_id"]}
         INTERSECT 
         SELECT entry_id 
         FROM dates 
-        WHERE time = ?""", mood, time
+        WHERE time = ?"", mood, time
     )[0]["id"]
-
+    """
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT id 
+        FROM entries
+        WHERE mood = %s AND author_id = %s
+        INTERSECT 
+        SELECT entry_id 
+        FROM dates 
+        WHERE time = %s;""", (mood, session["user_id"], time)
+        )
+        id = cur.fetchone()["id"]
+    """
     # Delete the rows with that id from both tables
     db.execute(f"DELETE FROM entries WHERE id = {id}")
-    db.execute(f"DELETE FROM dates WHERE entry_id = {id}")
-    
+    """
+    with conn.cursor() as cur:
+        cur.execute(f"DELETE FROM entries WHERE id = {id};")
+        conn.commit()
+
     # flash a success message 
     flash("Your entry has been successfully deleted")
     return redirect("/home")
@@ -422,12 +554,22 @@ check if JSON can have child object within.
 def stats():
 
     # Query for the numbers of each of the moods that user has 
-    information = db.execute("""
+    """
+    information = db.execute(""
                 SELECT mood, COUNT(mood) AS times 
                 FROM entries
                 WHERE author_id = ?
-                GROUP BY mood""", session["user_id"]
+                GROUP BY mood"", session["user_id"]
     )
+    """
+    with conn.cursor() as cur:
+        cur.execute("""
+                SELECT mood, COUNT(mood) AS times 
+                FROM entries
+                WHERE author_id = %s
+                GROUP BY mood""", (session["user_id"],)
+        )
+        information = cur.fetchall()
     
     # Stats dict to store each mood and corresponding count
     stats = {"moods": [], "times":[], "longest_entry": []}
@@ -436,7 +578,8 @@ def stats():
         stats["times"].append(info["times"])
 
     # Find the longest entry from the database 
-    longest_entry = db.execute("""
+    """
+    longest_entry = db.execute(""
             SELECT entry, iv, mood, year, month, day, time
             FROM entries
             JOIN dates ON entries.id = dates.entry_id
@@ -445,8 +588,22 @@ def stats():
                 FROM entries 
                 WHERE author_id = ?
             )
-    """, session["user_id"]                           
+    "", session["user_id"]                           
     )[0]
+    """
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT entry, iv, mood, year, month, day, time
+            FROM entries
+            JOIN dates ON entries.id = dates.entry_id
+            WHERE LENGTH(entries.entry) = (
+                SELECT MAX(LENGTH(entry)) 
+                FROM entries 
+                WHERE author_id = %s
+            )
+        """, (session["user_id"],)
+        )
+        longest_entry = cur.fetchone()
 
     # Add the longest entry to the stas json object
     stats["longest_entry"].append(longest_entry)
