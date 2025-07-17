@@ -1,5 +1,7 @@
-# Ignore all svg files
-.env
+# Ignore venv folder 
+venv/
+flask_session/
+
 
 # Ignore all icons
 /static/icons
