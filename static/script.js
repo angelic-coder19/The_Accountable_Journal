@@ -261,8 +261,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             // Convert the encryptedEntry and iv to Base64
             const base64string = bytesTobase64(encryptedEntry);
             const base64IV = bytesTobase64(IV);
-            console.log(base64string)
-
+            
             // Send the ecrypted entry, iv and mood to the database on the server    
             const response = await fetch('/make_entry', {
                 method: 'POST',
