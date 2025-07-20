@@ -1,4 +1,5 @@
 # Ignore venv folder 
+_pycache__/
 venv/
 flask_session/
 
