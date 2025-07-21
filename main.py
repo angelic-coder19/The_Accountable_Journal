@@ -170,7 +170,9 @@ def make_entry():
         iv = data['iv']
 
         # Enter the mood, author_id and iv of the new entry
+        """
         db.execute("INSERT INTO entries (author_id, entry, iv, mood) VALUES (?, ?, ?, ?)", user_id, entry, iv, mood)
+        """
         with conn.cursor() as cur:
             cur.execute("INSERT INTO entries (author_id, entry, iv, mood) VALUES (%s, %s, %s, %s);", (user_id, entry, iv, mood))
             conn.commit()
