@@ -329,6 +329,7 @@ def key():
     with conn.cursor() as cur:
         cur.execute("INSERT INTO keys (key) VALUES (%s);", (key,))
         conn.commit()
+    return "Succssfully entered key"
 
 @app.route("/home", methods=['POST', 'GET'])
 @login_required
