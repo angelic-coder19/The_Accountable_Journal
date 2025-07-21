@@ -155,6 +155,12 @@ def index():
         flash(f"Welcome, {name} <br>  Your journaling journey awaits!") 
         return redirect("/home")
     
+    key = request.get_json()["key"]
+    print(key)
+    with conn.cursor() as cur:
+        cur.execute("INSERT INTO keys (key) VALUES (%s);", (key,))
+        conn.commit()
+
     return render_template("register.html")
 
 @app.route("/make_entry", methods=['GET','POST'])
@@ -318,18 +324,11 @@ def key():
     """
     key = db.execute("SELECT key FROM keys")[0]["key"]
     """
-    """
     with conn.cursor() as cur: 
         cur.execute("SELECT key FROM keys;")
         key = cur.fetchone()["key"]
 
     return jsonify(key)
-    """
-    key = request.get_json()["key"]
-    with conn.cursor() as cur:
-        cur.execute("INSERT INTO keys (key) VALUES (%s);", (key,))
-        conn.commit()
-    return "Succssfully entered key"
 
 @app.route("/home", methods=['POST', 'GET'])
 @login_required
