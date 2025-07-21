@@ -154,7 +154,7 @@ def index():
         # Send success massage to the dashboard and redirect to homepage
         flash(f"Welcome, {name} <br>  Your journaling journey awaits!") 
         return redirect("/home")
-
+    
     return render_template("register.html")
 
 @app.route("/make_entry", methods=['GET','POST'])
@@ -289,23 +289,27 @@ def info():
         conn.commit()
     index += 1
     """
+    # Find out if a user is logged in
+    user_id = session.get("user_id")
+    if user_id:
+        with conn.cursor() as cur:
+            cur.execute("""
+                    SELECT entry, iv, mood, year, month, day, time
+                    FROM entries
+                    JOIN dates ON entries.id = dates.entry_id
+                    WHERE entries.id IN 
+                    (
+                        SELECT id 
+                        FROM entries 
+                        WHERE author_id = %s
+                    )
+                    ORDER BY id DESC;""", (user_id,)
+            )
+            info = cur.fetchall()
 
-    with conn.cursor() as cur:
-        cur.execute("""
-                SELECT entry, iv, mood, year, month, day, time
-                FROM entries
-                JOIN dates ON entries.id = dates.entry_id
-                WHERE entries.id IN 
-                (
-                    SELECT id 
-                    FROM entries 
-                    WHERE author_id = %s
-                )
-                ORDER BY id DESC;""", (session["user_id"],)
-        )
-        info = cur.fetchall()
-
-    return jsonify(info)
+        return jsonify(info)
+    else:
+        return jsonify([])
 
 @app.route("/key")
 @login_required
@@ -399,6 +403,7 @@ def home():
                 WHERE author_id = %s
             )   
         """
+        # Initialise list of values for placeholders if a searcha parameter is given
         values = [session["user_id"]]
 
         # Append filters conditionally 
