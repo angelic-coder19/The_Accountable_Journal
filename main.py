@@ -311,18 +311,23 @@ def info():
     else:
         return jsonify([])
 
-@app.route("/key")
+@app.route("/key", methods=["POST"])
 @login_required
 def key():
     """ Send the encryption key to the frontend for use """
     """
     key = db.execute("SELECT key FROM keys")[0]["key"]
     """
+    """
     with conn.cursor() as cur: 
         cur.execute("SELECT key FROM keys;")
         key = cur.fetchone()["key"]
 
     return jsonify(key)
+    """
+    key = request.get_json()["key"]
+    with conn.cursor() as cur:
+        cur.execute("INSERT INTO keys (key) VALUES (%s);", key)
 
 @app.route("/home", methods=['POST', 'GET'])
 @login_required
