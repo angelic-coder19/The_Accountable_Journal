@@ -16,14 +16,22 @@ app = Flask(__name__)
 # Create connection to Postgres DB using environemnt variables from .env file
 load_dotenv()
 
-conn = psycopg.connect(
-    dbname=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASS"),
-    host=os.getenv("DB_HOST"),
-    port=os.getenv("DB_POST"),
-    row_factory=dict_row  # This ensures we get back a list of dicts from queries
-)
+# Check for Heroku DATABASE_URL 
+DATABASE_URL = os.environ("DATABASE_URL")
+
+if DATABASE_URL:
+    # Make the connection for the production envirionment
+    conn = psycopg.connect(DATABASE_URL, autocommit= True, row_factory=dict_row)
+else:
+    # Connect to local database environment 
+    conn = psycopg.connect(
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS"), 
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        row_factory=dict_row  # This ensures we get back a list of dicts from queries
+    )
 
 # Create connection to the database
 db = SQL("sqlite:///journal.db")
