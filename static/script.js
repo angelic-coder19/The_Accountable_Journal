@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             console.log("Everything is fine🙂");
         }
     }
-    /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING 
+    /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING */ 
     // Generate a cryptographic key 
     const key = await crypto.subtle.generateKey(
         {name: "AES-GCM", length: 256}, // Algorithm
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     const base64Key = bytesTobase64(keyBytes);
 
     // Send this key One time to the server for storage
-    fetch ("/search", {
+    fetch ("/key", {
         method: "POST",
         headers: {
             'content-type' : 'application/json',
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             key : base64Key
         })
     });
-    */
+    /*
 
     // Fetch the encryption key from the bakend as base64 string
     const keyresponse = await fetch("/key");
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
             const results = response.json();
             console.log(results);
-        }); */
+        }); 
     // Get the search results
     const searchResponse = await fetch("/results");
     const results = await searchResponse.json();
@@ -373,18 +373,20 @@ document.addEventListener('DOMContentLoaded', async function(){
 
         // Find all delete icons and make the ready for deletion
         let deleteButtons = document.querySelectorAll('.deleteIcon');
-        
+        console.log(deleteButtons);
         for (let deleteButton of deleteButtons){
-            deleteButton.addEventListener('click', function (event){
+            deleteButton.addEventListener('click', async function (event){
                 // Find which button was clicked
                 deleteButton = event.target;
                 
                 // Navigate up the DOM tree and delte that row
-                card = deleteButton.closest('.infoCard');
+                card = await deleteButton.closest('.infoCard');
 
                 // API to delete the entry from the database 
                 const time = card.querySelector('.time').innerHTML;
                 const mood = card.querySelector('.mood').innerHTML;
+                
+                console.log(mood, time);
 
                 fetch("/delete",{
                     method: "POST", 
@@ -468,5 +470,5 @@ document.addEventListener('DOMContentLoaded', async function(){
             renderEntries(stats.longest_entry,"#longestEntry");
         } catch (TypeError) {
             console.log("Everthing is fine, not on stats page yet🙂")
-        }  
+        } */  
 }); 
