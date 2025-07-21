@@ -311,7 +311,7 @@ def info():
     else:
         return jsonify([])
 
-@app.route("/key", methods=["POST"])
+@app.route("/key")
 @login_required
 def key():
     """ Send the encryption key to the frontend for use """
