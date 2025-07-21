@@ -284,26 +284,6 @@ document.addEventListener('DOMContentLoaded', async function(){
         console.log("Everything is fine🙂")
     }
      
-        // Get the contents of the from and convert them into a json object 
-        document.querySelector('#searchForm').addEventListener('submit', async function(event){
-            // Prevent the default form from bing sent
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            const json = Object.fromEntries(formData.entries());
-
-            console.log(json);
-            // Send this from data to the search route via POST
-            const response = await fetch ("/results", {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(json)
-            });
-
-            const results = response.json();
-            console.log(results);
-        }); 
     // Get the search results
     const searchResponse = await fetch("/results");
     const results = await searchResponse.json();
