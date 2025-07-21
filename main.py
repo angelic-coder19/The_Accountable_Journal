@@ -17,7 +17,7 @@ app = Flask(__name__)
 load_dotenv()
 
 # Check for Heroku DATABASE_URL 
-DATABASE_URL = os.environ("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
     # Make the connection for the production envirionment
