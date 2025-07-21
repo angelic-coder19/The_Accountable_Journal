@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             console.log("Everything is fine🙂");
         }
     }
-    /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING */ 
+    /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING  
     // Generate a cryptographic key 
     const key = await crypto.subtle.generateKey(
         {name: "AES-GCM", length: 256}, // Algorithm
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             key : base64Key
         })
     });
-    /*
+    */
 
     // Fetch the encryption key from the bakend as base64 string
     const keyresponse = await fetch("/key");
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     } catch (TypeError) {
         console.log("Everything is fine🙂")
     }
-     /*
+     
         // Get the contents of the from and convert them into a json object 
         document.querySelector('#searchForm').addEventListener('submit', async function(event){
             // Prevent the default form from bing sent
@@ -470,5 +470,5 @@ document.addEventListener('DOMContentLoaded', async function(){
             renderEntries(stats.longest_entry,"#longestEntry");
         } catch (TypeError) {
             console.log("Everthing is fine, not on stats page yet🙂")
-        } */  
+        }  
 }); 

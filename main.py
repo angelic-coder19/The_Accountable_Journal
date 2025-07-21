@@ -154,12 +154,6 @@ def index():
         # Send success massage to the dashboard and redirect to homepage
         flash(f"Welcome, {name} <br>  Your journaling journey awaits!") 
         return redirect("/home")
-    
-    key = request.get_json()["key"]
-    print(key)
-    with conn.cursor() as cur:
-        cur.execute("INSERT INTO keys (key) VALUES (%s);", (key,))
-        conn.commit()
 
     return render_template("register.html")
 
