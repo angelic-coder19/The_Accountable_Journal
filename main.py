@@ -327,7 +327,7 @@ def key():
     """
     key = request.get_json()["key"]
     with conn.cursor() as cur:
-        cur.execute("INSERT INTO keys (key) VALUES (%s);", key)
+        cur.execute("INSERT INTO keys (key) VALUES (%s);", (key,))
         conn.commit()
 
 @app.route("/home", methods=['POST', 'GET'])
