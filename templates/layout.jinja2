@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Lexend:wght@100..900&family=Rancho&display=swap" rel="stylesheet">
+        <link href="/static/icons/favicon.ico" rel="icon">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
         <script src="/static/script.js" defer></script>
@@ -64,7 +65,11 @@
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                        <p>{{ message |safe }}</p>
+                        <header>
+                            <div class="alert w-5 alert-secondary p-0 text-center rounded-0" role="alert">
+                                {{ message |safe }}
+                            </div>
+                        </header>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
