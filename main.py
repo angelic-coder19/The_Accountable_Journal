@@ -1,6 +1,7 @@
 from cs50 import SQL
 from flask import Flask, flash, render_template, request, redirect, session, jsonify
 from flask_session import Session
+from flask_talisman import Talisman
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -12,6 +13,9 @@ import psycopg
 
 # Configure appliaction
 app = Flask(__name__)
+
+# Ensure all trffic is redirected to https
+#Talisman(app)
 
 # Create connection to Postgres DB using environemnt variables from .env file
 load_dotenv()
@@ -61,8 +65,13 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/")
 def index():
+    # Landing page
+    return render_template("home_page.jinja2")
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
 
     # If the user has registered via a form 'POST'
     if request.method == 'POST':
@@ -113,7 +122,7 @@ def index():
             user_email = cur.fetchone()
         if user_email:
             flash(f"A user with {email} already exists")
-            return redirect("/")
+            return redirect("/register")
         """
         # Check if the entered username is alredy used
         if db.execute("SELECT * FROM authors WHERE name = ?", name):
@@ -212,7 +221,7 @@ def logout():
     
     #Redirect to register page
     flash("You were Successfully logged out <br> Goodbye")
-    return redirect("/login")
+    return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
