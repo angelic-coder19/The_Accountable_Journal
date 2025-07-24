@@ -47,8 +47,9 @@ textarea {
     border-radius: 4px;
 }
 textarea:focus {
-    border: 3px solid #fff200;
+    border: 3px solid #75726e;
     outline: none;
+    box-shadow: hsl(from color 3 4 5);
 }
 .infoCard {
     border-radius: 10px;
@@ -90,4 +91,77 @@ a {
 }
 .statistic {
     font-weight: 700;
+}
+.field-help-popup {
+    width: 200px;
+    z-index: 10;
+    display: none;
+}
+  body {
+    font-family: 'Rancho', cursive;
+    background-color: #f8f4e9;
+    color: #3a3226;
+    line-height: 1.6;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(248, 244, 233, 0.7), rgba(248, 244, 233, 0.7)), 
+                url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 5rem 0;
+    border-bottom: 1px solid #e0d6c2;
+}
+
+.brand-title {
+    font-size: 4rem;
+    color: #5d4b36;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.tagline {
+    font-size: 2.5rem;
+    color: #7a6b58;
+}
+
+.feature-card {
+    background-color: #fffdf8;
+    border-radius: 10px;
+    border: 1px solid #e0d6c2;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: #75726e;
+}
+
+.btn-journal {
+    background-color: #75726e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.2rem;
+}
+
+.btn-journal:hover {
+    background-color: #7a6b58;
+    color: white;
+}
+
+.testimonial {
+    font-style: italic;
+    color: #5d4b36;
+}
+
+footer {
+    background-color: #75726e;
+    color: #e0d6c2;
+    padding: 2rem 0;
 }
