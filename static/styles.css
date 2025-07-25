@@ -92,11 +92,6 @@ a {
 .statistic {
     font-weight: 700;
 }
-.field-help-popup {
-    width: 200px;
-    z-index: 10;
-    display: none;
-}
   body {
     font-family: 'Rancho', cursive;
     background-color: #f8f4e9;
@@ -115,13 +110,13 @@ a {
 
 .brand-title {
     font-size: 4rem;
-    color: #5d4b36;
+    color: #000;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .tagline {
     font-size: 2.5rem;
-    color: #7a6b58;
+    color: #000;
 }
 
 .feature-card {
@@ -139,7 +134,7 @@ a {
 
 .feature-icon {
     font-size: 3rem;
-    color: #75726e;
+    color: #000;
 }
 
 .btn-journal {
@@ -151,7 +146,7 @@ a {
 }
 
 .btn-journal:hover {
-    background-color: #7a6b58;
+    background-color: #000;
     color: white;
 }
 
@@ -162,6 +157,15 @@ a {
 
 footer {
     background-color: #75726e;
-    color: #e0d6c2;
+    color: #fff;
     padding: 2rem 0;
+}
+.empty_state {
+    padding-top: 5px;
+    height: 110%;
+    width: 100%;
+}
+#empty_state_text {
+    padding-bottom: 0;
+    font-size: x-large;
 }

@@ -168,9 +168,9 @@ document.addEventListener('DOMContentLoaded', async function(){
                     </div>
                 </div>
                 `    
-            }
+            }    
         } catch (TypeError) {
-            console.log("Everything is fine🙂");
+            console.log("Everything is fine🙂, not on home page yet");
         }
     }
     /* DO NOT DE - COMMENT THIS CODE!! THIS WAS A ONE TIME THING  
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             }
         });
     } catch (TypeError) {
-        console.log("Everything is fine🙂")
+        console.log("Everything is fine🙂, not on make entry page yet");
     }
      
     // Get the search results
@@ -294,12 +294,25 @@ document.addEventListener('DOMContentLoaded', async function(){
             // Request for information from the server for decryption
         let response = await fetch("/info");
         let entries = await response.json(); // Get a list of json objects from each entry
+        
+        // Find the number of entries in the info JSON 
+        let entryCount = Object.keys(entries).length;
 
         const body = document.getElementById("mainBody");
 
-    try {
-        // Show placeholders 
+    try { 
         for (let j = 0; j <  4; j++) {
+            // If user has no entries yet
+            if (entryCount == 0) {
+                body.innerHTML = `<div class="col col-sm-12 mx-2 text-center">
+                                    <p id="empty_state_text">
+                                        You don't have any entries yet<br>
+                                        <a id="first" href="/make_entry" style="color: #000">Make your 1st entry</p>
+                                  <img src="static/background_images/empty_state.jpg" alt="No data to display" class="empty_state"></div>`;
+                return;
+            }
+
+            // Show placeholders
             body.innerHTML += `
             <div class="col-lg-3 col-sm-12 p-0 my-0.5 placeholder-card">
             <div class="card placeholder-glow p-2 m-1" style="outline: none">
@@ -337,55 +350,70 @@ document.addEventListener('DOMContentLoaded', async function(){
             </div>
             `
         }
-            const delay = 1570; // Delay to render entries in miliseconds
-            setTimeout(async () => {
-                // Clear the placholders 
-                body.innerHTML = "";
+        const delay = 1570; // Delay to render entries in miliseconds
+        setTimeout(async () => {
+            // Clear the placholders 
+            body.innerHTML = "";
+            
+            // Fetch the actual entries and render them
+            await renderEntries(entries, '#mainBody');
+            
+            // Find all delete icons and make the ready for deletion
+            let deleteButtons = document.querySelectorAll('.deleteIcon');
+            
+            for (let deleteButton of deleteButtons){
+                deleteButton.addEventListener('click', async function (event){
+                    // Find which button was clicked
+                    deleteButton = event.target;
+                    
+                    // Navigate up the DOM tree and delte that row
+                    card = await deleteButton.closest('.infoCard');
+    
+                    // API to delete the entry from the database 
+                    const time = card.querySelector('.time').innerHTML;
+                    const mood = card.querySelector('.mood').innerHTML;
+                    
+                    // Delete the entry card client side
+                    card.remove();
 
-                // Fetch the actual entries and render them
-                await renderEntries(entries, '#mainBody');
-            }  , delay)
-        } catch(TypeError){
-            console.log("Everything is Fine🙂, search page loaded")
-        }
-        // Find the number of entries in the info JSON 
-        let entryCount = Object.keys(entries).length;
-
-        // Find all delete icons and make the ready for deletion
-        let deleteButtons = document.querySelectorAll('.deleteIcon');
-        console.log(deleteButtons);
-        for (let deleteButton of deleteButtons){
-            deleteButton.addEventListener('click', async function (event){
-                // Find which button was clicked
-                deleteButton = event.target;
-                
-                // Navigate up the DOM tree and delte that row
-                card = await deleteButton.closest('.infoCard');
-
-                // API to delete the entry from the database 
-                const time = card.querySelector('.time').innerHTML;
-                const mood = card.querySelector('.mood').innerHTML;
-                
-                console.log(mood, time);
-
-                fetch("/delete",{
-                    method: "POST", 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        del_time : time,
-                        del_mood : mood 
-                    })
-                });
-
-                // Delete the entry card client side
-                card.remove();
-            });        
-        }
+                    const deleteRequest = await fetch("/delete",{
+                        method: "POST", 
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            del_time : time,
+                            del_mood : mood 
+                        })
+                    });
+                    
+                    // Inform user of successful deletion
+                    const deleteResponse = await deleteRequest.json();
+                    document.querySelector("#flashMessages").innerHTML = deleteResponse.message;
+    
+                });        
+            }
+        }, delay)
+        
+    } catch(TypeError){
+            console.log("Everything is Fine🙂, search page not loaded yet");
+    }
         
         // Everything statisticall will be done here 
-        try { 
+        try {
+            // If user has no stats yet 
+            if (entryCount == 0) {
+                document.querySelector("#stats").innerHTML = `
+                                <div class="col col-sm-12 mx-2 text-center">
+                                    <p id="empty_state_text">
+                                        We don't have any stats to show you yet<br>
+                                        <a id="first" href="/make_entry" style="color: #000">Make your 1st entry</a>
+                                    </p>
+                                  <img src="static/background_images/empty_state.jpg" alt="No data to display" class="empty_state">
+                                </div>`;
+                return;
+            }
+
             document.querySelector("#entryCount").innerHTML += `<div class="col text-start py-2 stat"> 
                                                                     Total Entries: <span class="statistic"> ${entryCount} </span>
                                                                 </div>`;
