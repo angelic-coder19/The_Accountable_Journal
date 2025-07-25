@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     function getBGcolor(mood) {
         switch(mood){
             case 'Happy':
-                return "#FFf200"; // light yellow
+                return "#fff200"; // light yellow
             case 'Sad':
                 return "#5c6bc0";  // 
             case 'Angry':
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async function(){
             case 'Lonely':
                 return "#b39ddb"; // bluish-grey
             case 'Inspired':
-                return "#f0e035"; // dark yeallow
+                return "#c71585"; // dark yeallow
             default:
                 return "#ffffff"; // White 
         }
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     
                 // Dyanmically generate card to display a single entry and it's information
                 body.innerHTML += `
-                <div class="col-lg-3 col-sm-12 p-0 my-0.5">
+                <div class="col-lg-3 col-sm-12 mx-0.5 p-0">
                     <div class="infoCard" style="background-color: ${getBGcolor(mood)}">
                         <div class="row">
                             <div class="col text-start">
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                             </div>
                             </div>
                             <div class="row text-center entry">
-                                <p>${plainText}</p>
+                                <p class="plainText">${plainText}</p>
                             </div>
                             <div class="row">
                             <div class="col text-start binIcon">
@@ -166,8 +166,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                             </div>
                         </div>
                     </div>
-                </div>
-                `    
+                </div>`    
             }    
         } catch (TypeError) {
             console.log("Everything is fine🙂, not on home page yet");

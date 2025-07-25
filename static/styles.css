@@ -55,7 +55,8 @@ textarea:focus {
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
-    color: #fff
+    color: #fff;
+    margin-left: 5px;
 }
 .entry {
     font-size: x-large;
@@ -110,7 +111,7 @@ a {
 
 .brand-title {
     font-size: 4rem;
-    color: #000;
+    color: rgb(255, 00, 255);
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -168,4 +169,25 @@ footer {
 #empty_state_text {
     padding-bottom: 0;
     font-size: x-large;
+}
+.plainText {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+::-webkit-scrollbar{
+    width: 5px;
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb{
+    background-color: rgb(246, 246, 246);
+    border-radius: 20px;
+}
+#mainBody {
+    overflow-x: hidden;
+    max-width: 100%;
+    
+}
+.row {
+    flex-wrap: wrap;
+    margin-right: 0;
 }
