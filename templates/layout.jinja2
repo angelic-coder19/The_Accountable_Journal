@@ -66,8 +66,8 @@
                 {% if messages %}
                     {% for message in messages %}
                         <header>
-                            <div class="alert w-5 alert-secondary p-0 text-center rounded-0" role="alert">
-                                {{ message |safe }}
+                            <div class="alert w-5 alert-secondary p-0 text-center rounded-0" id="flashMessages" role="alert">
+                                {{ message }}
                             </div>
                         </header>
                     {% endfor %}

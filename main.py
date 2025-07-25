@@ -80,32 +80,30 @@ def register():
         password = request.form.get('password')
         confirmation = request.form.get('confirmation')
 
-        print(name, email, password, confirmation)
-        
         # Validation of name and email
         if not (name and name.strip()):
-            error = "Enter a psuedo name eg. thoughtful-thinker12"
-            return render_template("register.html", error = error)
+            flash("Enter a psuedo name eg. thoughtful-thinker12")
+            return redirect("/register")
 
         elif not (email and email.strip()):
-            error = "Enter a valide email"
+            flash("Enter a valide email")
 
         # Validate email by using the email regex
         elif re.match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', email) is None:
-            error = "Enter a valid email"
-            return render_template("register.html", error = error)
+            flash("Oops! That email wasn't quite right <br> please enter a valid email")
+            return redirect("/register")
         
         # Validate passwords to ensure they match
         elif not (password and password.strip()):
-            error = "Enter a password"
-            return render_template("register.html", error=error)
+            flash("Enter a password")
+            return redirect("/register")
         elif not (confirmation and confirmation.strip()):
-            error = "Please confirm your password"
-            return render_template("register.html", error=error)
+            flash("Please confirm your password")
+            return render_template("/register")
         
         elif str(password) != str(confirmation):
-            error = "Your passwords do not match"
-            return render_template("register.html", error=error)
+            ("Your passwords do not match")
+            return redirect("/register")
         
         # Generate a hash of the password 
         passaword_hash = generate_password_hash(password)
@@ -121,7 +119,7 @@ def register():
             cur.execute("SELECT * FROM authors WHERE email = %s;", (email,))
             user_email = cur.fetchone()
         if user_email:
-            flash(f"A user with {email} already exists")
+            flash(f"Ooops! <b>{email}</b> is already taken by another user😬")
             return redirect("/register")
         """
         # Check if the entered username is alredy used
@@ -134,8 +132,8 @@ def register():
             cur.execute("SELECT * FROM authors WHERE name = %s;", (name,))
             inititial_user = cur.fetchone()
         if inititial_user:
-            error = "A user with " + name + " is already taken "
-            return render_template("register.html", error=error)
+            flash(f"Oops! The username <b>{name}</b> is already taken😬")
+            return redirect("/register")
         """
         # If all is well register the user
         db.execute(""
@@ -161,7 +159,7 @@ def register():
         session["user_id"] = user_id
 
         # Send success massage to the dashboard and redirect to homepage
-        flash(f"Welcome, {name} <br>  Your journaling journey awaits!") 
+        flash(f"Welcome, {name} <br>  Your journaling journey awaits🌟!") 
         return redirect("/home")
 
     return render_template("register.html")
@@ -216,30 +214,35 @@ def make_entry():
 @app.route("/logout")
 @login_required
 def logout():
+    # Get user's name for more personalised experience 
+    with conn.cursor() as cur:
+        cur.execute("SELECT name FROM authors WHERE id = %s;", (session["user_id"],))
+        name = cur.fetchone()["name"]
+
     # Clear session inforamtion (user_id)  
     session.clear()
-    
-    #Redirect to register page
-    flash("You were Successfully logged out <br> Goodbye")
+
+    #Redirect to home page
+    flash(f"Goodbye, {name} &#128075;<br>You were Successfully logged out!")
     return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # Forget any user_id
-    session.clear()
+    """User reached this route via POST by filling in a form"""  
+    if request.method == "POST":    
+        # Forget any user id 
+        session.clear()
 
-    # User reached this route via POST by filling in a form 
-    if request.method == "POST":
         password = request.form.get('password')
         email = request.form.get('email')
 
         # Validate email and password
         if not (password and password.strip()):
-            error = "Please enter a password"
-            return render_template("login.html", error=error)
+            flash("Oops! you forgot to enter a password")
+            return redirect("/login")
         elif not (email and email.strip()): 
-            error = "Please enter your email"
-            return render_template("login.html", error=error)
+            flash("Oops! forgot to enter your email😄")
+            return redirect("/login")
 
         # Check if emails match
         """
@@ -255,8 +258,8 @@ def login():
         if len(rows) != 1 or not check_password_hash(
             rows[0]['password'], password
         ):
-            error = "Incorrect email and/or password" 
-            return render_template("login.html", error=error)
+            flash("Incorrect email and/or password")
+            return redirect("/login")
 
         # Begin a new session for that user and redirect them to the homepage
         session["user_id"] = rows[0]['id']
@@ -494,9 +497,8 @@ def delete():
         cur.execute(f"DELETE FROM entries WHERE id = {id};")
         conn.commit()
 
-    # flash a success message 
-    flash("Your entry has been successfully deleted")
-    return redirect("/home")
+    # Return success message
+    return jsonify({"message":"Your entry has been deleted successfully🚩"})
 
 @app.route("/results")
 @login_required
