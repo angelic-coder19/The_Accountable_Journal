@@ -1,6 +1,8 @@
 # **The Accountable Journal:**
 
 The Accountable Journal is the future of journaling. It was built with one goal <i>make journaling addictive and fun</i>
+## Live App
+You can try The Accountable Journal [here](https://www.accountable-journal.space/) 
 
 This document will attempt to breakdown and explain the design choices.
 >[!NOTE] 
