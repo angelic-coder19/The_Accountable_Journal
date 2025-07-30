@@ -1,6 +1,8 @@
 # **The Accountable Journal:**
 
 The Accountable Journal is the future of journaling. It was built with one goal <i>make journaling addictive and fun</i>
+## Live App
+You can try The Accountable Journal [here](https://www.accountable-journal.space/) 
 
 This document will attempt to breakdown and explain the design choices.
 >[!NOTE] 
@@ -85,8 +87,8 @@ The following are the libraries and imports and their uses:
     from this library, the app imports two functions 
     + `generate_password_hash` 
         This funcition is obviously used create a hashed version of a password that the user enters. this is used in the `/register` route to store a hashed version of the password for security reasons. <br>
-        >[!CAUTION]
-        > Passwords must never be stored as plain text for obvious security reasons, thus the use of the `generate_password_hash` is strongly recommended when storing user passwords
+>[!CAUTION]
+> Passwords must never be stored as plain text for obvious security reasons, thus the use of the `generate_password_hash` is strongly recommended when storing user passwords
     + `check_password_hash`
         This high level function is used to compare whether a given string password's hash is the same as a pre made hash.
         It takes in a string password and a hash as inputs and returns a boolean value `true` (if the passwords match)  and `false` (if the passwords do not match).
@@ -148,19 +150,19 @@ The app currently has 12 routes that all serve very crutial functions. This docu
             conn.commit()
         ```
         As shown in the example, each unit of time (year, month, day, time) is fragmented and singled out to ensure that journal entries are searchable and can be grouped. Further, fields `month`, `date` and `year` are stored as `INTEGER`s to ensure that entries can be arranged based on earliest, latest and other aggregate functions such as `MAX` or `MIN` can be carried out. 
-        >[!CAUTION]
-        >Considering the fact that the _time_ field is obtained from the server, inaccuracies may arise as the default time-zone used by the server is by default **UTC**. 
-        >Future improvements will attempt using time provided by the client's browser using the `Date` javascipt object.
+>[!CAUTION]
+>Considering the fact that the _time_ field is obtained from the server, inaccuracies may arise as the default time-zone used by the server is by default **UTC**. 
+>Future improvements will attempt using time provided by the client's browser using the `Date` javascipt object.
         
-        Finally once an entry has been successfully been saved to the database, this route returns a json object that serves as a response to the initial fetch request throught which this route was reached. illustrated:
+ Finally once an entry has been successfully been saved to the database, this route returns a json object that serves as a response to the initial fetch request throught which this route was reached. illustrated:
         ```
         flash("Your entery has been added")
         # Return redirect route after success
-        return jsonify({'status': 'success', 'redirect': '/home'})
+        return jsonify({'status': 'success', 'redirect': '/home'}    )
         ```
-        >[!NOTE]
-        >POST requests sent via a fetch on the client side differ greatly from traditionl POST request sent from form submission. 
-        This is is the reason why this route returns json with success status and redirect instructions rather than a traditional `redirect` funciton with a destination. 
+>[!NOTE]
+>POST requests sent via a fetch on the client side differ greatly from traditionl POST request sent from form submission. 
+This is is the reason why this route returns json with success status and redirect instructions rather than a traditional `redirect` funciton with a destination. 
 3. `/login`
     + This route simply renders an html form with password and username fields when accessed via `GET`. 
     + When accessed via `POST`, The route will confirm that the user exists in the database, and then checks whether the passwords for that user match using `check_password_hash()` function.
@@ -210,18 +212,15 @@ The app currently has 12 routes that all serve very crutial functions. This docu
             # Append only distict items into each searchable
             if searchable["mood"] not in moods:
                 moods.append(searchable["mood"])
-
             if searchable["year"] not in years:
                 years.append(searchable["year"])
-
             if searchable["month"] not in months: 
                 months.append(searchable["month"])
-
             if searchable["day"] not in days:
                 days.append(searchable["day"])
-        ```
-        As seen in the example above a conditional check is done to ensure that the options are unique. 
-        Finally these _searchables_ are passed to the _search.jinja2_ template as select dropdown options for the user to choose from. 
+            ```
+As seen in the example above a conditional check is done to ensure that the options are unique. 
+Finally these _searchables_ are passed to the _search.jinja2_ template as select dropdown options for the user to choose from. 
         `return render_template("search.jinja2", moods=moods, years=years, days=days, months=months)`
     + via `POST`
         This route can be reached via this method when a search has been been made. 
@@ -231,10 +230,11 @@ The app currently has 12 routes that all serve very crutial functions. This docu
         # Initialise list of values for placeholders if a searcha parameter is given
         values = [session["user_id"]]
         ```
-        >[!IMPORTANT]
-        >`psycopg` allows the use of both _list_ s and _tuple_ s to be passed to queries as positional arguments.<br>
-        > In this context a _list_ is used due to its **mutable** nature that is, it can be appeneded to as opposed to _tuple_ s which are **immutabel** and thus retain their state.        
-        The conditional building of the query and the parameters    through `values` is Illustrated:
+>[!IMPORTANT]
+>`psycopg` allows the use of both _list_ s and _tuple_ s to be passed to queries as positional arguments.<br>
+> In this context a _list_ is used due to its **mutable** nature that is, it can be appeneded to as opposed to _tuple_ s which are **immutabel** and thus retain their state.        
+
+The conditional building of the query and the parameters    through `values` is Illustrated:
         ```
         # Append filters conditionally 
         if year and year != 'year':
@@ -242,37 +242,32 @@ The app currently has 12 routes that all serve very crutial functions. This docu
             values.append(int(year))
         else:
             query += " AND year = year"
-
         if month and month != 'month':
             query += " AND month = %s"
             values.append(int(month))
         else:
             query += " AND month = month"
-        
         if day and day != 'day':
             query += " AND day = %s"
             values.append(int(day))
         else: 
             query += " AND day = day"
-
         if mood:
             query += " AND mood = %s"
             values.append(mood)
         else:
             query += " AND mood = mood"
-        
         with conn.cursor() as cur:
             cur.execute(query + ";", values)
             results = cur.fetchall()
         ```
-    >[!TIP]
-    >PostgresSQL using `psycopg` by default requires positional arguments to be passed t o queries as _tuples_ or _lists_. This is convinient for building conditionally adding filters or search parameters. 
-    >SQLite using `db.execute` from `cs50` library on the other hand requires that positional arguments are passed in the more tradional way. While the same code can be used in this context, when finally executing this query, the `*` operater must be used to sort of 'unpack' the filters so that they can be stand alone positional arguments.  
+>[!TIP]
+>PostgresSQL using `psycopg` by default requires positional arguments to be passed t o queries as _tuples_ or _lists_. This is convinient for building conditionally adding filters or search parameters. 
+>SQLite using `db.execute` from `cs50` library on the other hand requires that positional arguments are passed in the more tradional way. While the same code can be used in this context, when finally executing this query, the `*` operater must be used to sort of 'unpack' the filters so that they can be stand alone positional arguments.  
 
-    The final step on this route, is to update the global list `search_results` with the result of the compound query:
-    `search_results = results`
-    >[!NOTE]
-    >Due to the fact that routes that are accessed via `POST` cannot send back json to the client on the same route, the return value of this route is simply the _search\_results.jinja2_ template.
+The final step on this route, is to update the global list `search_results` with the result of the compound query: `search_results = results`
+>[!NOTE]
+>Due to the fact that routes that are accessed via `POST` cannot send back json to the client on the same route, the return value of this route is simply the _search\_results.jinja2_ template.
 7. `/results`
     This is the route that is responsible for sending search results to the client via a simple fetch API. 
     It can only able reached via `GET`. It converts the global list (`search_results`) containing the entries as dicts. 
@@ -422,7 +417,6 @@ const config = {
 
 Security Notes
 >[!CAUTION]
-
 >Encryption keys are never stored in client-side code
 >All journal entries are encrypted before transmission
 >IVs are generated fresh for each entry
