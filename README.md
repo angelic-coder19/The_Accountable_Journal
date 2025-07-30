@@ -337,6 +337,18 @@ This JavaScript file handles all client-side functionality including encryption/
 2. **Visual Styling**
     `function getBGcolor(mood)`
     Returns mood-specific background colors for entry cards
+    + Angry - bright red #f40a04 
+    + Happy - bright Yellow #fff200
+    + Sad - Sad deep blue #5c6bc0
+    + Calm - Tourqouise #47ffeb
+    + Anxious - Light pink #ef8a8a
+    + Lonely - Pale violet #ce83d8
+    + Confident - Light blue #0fb4FA
+    + Meh - Pale gray #858585
+    + Hopeful - Orange #ff6f02
+    + Tired - Bluish gray #90a4ae
+    + Greateful - Olive green #aeee23
+    + Inspired - Deep purpule #c71585
     Uses a vibrant color palette to create visual emotional mapping
     Defaults to white for undefined moods, Which may never happen give the robustness of the system. 
 
