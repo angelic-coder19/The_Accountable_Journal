@@ -262,7 +262,7 @@ The conditional building of the query and the parameters    through `values` is 
             results = cur.fetchall()
         ```
 >[!TIP]
->PostgresSQL using `psycopg` by default requires positional arguments to be passed t o queries as _tuples_ or _lists_. This is convinient for building conditionally adding filters or search parameters. 
+>PostgreSQL using `psycopg` by default requires positional arguments to be passed t o queries as _tuples_ or _lists_. This is convinient for building conditionally adding filters or search parameters. 
 >SQLite using `db.execute` from `cs50` library on the other hand requires that positional arguments are passed in the more tradional way. While the same code can be used in this context, when finally executing this query, the `*` operater must be used to sort of 'unpack' the filters so that they can be stand alone positional arguments.  
 
 The final step on this route, is to update the global list `search_results` with the result of the compound query: `search_results = results`
