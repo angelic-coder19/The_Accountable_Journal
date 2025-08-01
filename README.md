@@ -394,7 +394,7 @@ Base64 encoding for transmission
 5. **Data Management**
 + Fetches entries from /info endpoint
 + Processes search results from /results
-+ Implements entry deletion with confirmation
++ Implements entry deletion with confirmation as a flash message. 
 
 ### Statistical Visualization
 ```
