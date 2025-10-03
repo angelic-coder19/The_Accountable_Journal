@@ -433,6 +433,8 @@ Batch DOM updates to minimize reflows
 
 Efficient query selectors
 
+Addition of lazy loading and requesting more queries only when user scrolls to the bottom to save on server memory
+
 Async/await pattern for non-blocking operations
 
 Future Improvements
