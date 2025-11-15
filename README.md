@@ -236,7 +236,7 @@ Finally these _searchables_ are passed to the _search.jinja2_ template as select
         ```
 >[!IMPORTANT]
 >`psycopg` allows the use of both _list_ s and _tuple_ s to be passed to queries as positional arguments.<br>
-> In this context a _list_ is used due to its **mutable** nature that is, it can be appeneded to as opposed to _tuple_ s which are **immutabel** and thus retain their state.        
+> In this context a _list_ is used due to its **mutable**(changeable) nature that is, it can be appeneded to as opposed to _tuple_ s which are **immutabel** and thus retain their state.        
 
 The conditional building of the query and the parameters    through `values` is Illustrated:
         ```
