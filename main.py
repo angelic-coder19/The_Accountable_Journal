@@ -109,7 +109,7 @@ def register():
         passaword_hash = generate_password_hash(password)
 
         """
-        # Check if the a user with that email already exists 
+        # Check if a user with that email already exists 
         if db.execute("SELECT * FROM authors WHERE email = ?", email):
             error = "A user with " + email + " aready exists"
             return render_template("register.html", error=error)
