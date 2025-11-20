@@ -158,7 +158,7 @@ def register():
 
         session["user_id"] = user_id
 
-        # Send success massage to the dashboard and redirect to homepage
+        # Send a success message to the dashboard and redirect to the homepage
         flash(f"Welcome, {name} <br>  Your journaling journey awaits🌟!") 
         return redirect("/home")
 
