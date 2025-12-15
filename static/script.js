@@ -351,13 +351,13 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
         const delay = 1570; // Delay to render entries in miliseconds
         setTimeout(async () => {
-            // Clear the placholders 
+            // Clear the placeholders 
             body.innerHTML = "";
             
             // Fetch the actual entries and render them
             await renderEntries(entries, '#mainBody');
             
-            // Find all delete icons and make the ready for deletion
+            // Find all delete icons and make them ready for deletion
             let deleteButtons = document.querySelectorAll('.deleteIcon');
             
             for (let deleteButton of deleteButtons){
@@ -398,9 +398,9 @@ document.addEventListener('DOMContentLoaded', async function(){
             console.log("Everything is Fine🙂, search page not loaded yet");
     }
         
-        // Everything statisticall will be done here 
+        // Everything statistical will be done here 
         try {
-            // If user has no stats yet 
+            // If the user has no stats yet 
             if (entryCount == 0) {
                 document.querySelector("#stats").innerHTML = `
                                 <div class="col col-sm-12 mx-2 text-center">
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                 // Populate colors array with the custom color for each mood
                 colors[i] = getBGcolor(stats.moods[i]);
 
-                // Calculate the percntage of each mood
+                // Calculate the percentage of each mood
                 stats.moods[i] += " - " + Math.round((stats.times[i]/entryCount) * 100) + "%";
             }
             const config = {
