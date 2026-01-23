@@ -165,14 +165,14 @@ The app currently has 12 routes that all serve very crutial functions. This docu
         return jsonify({'status': 'success', 'redirect': '/home'}    )
         ```
 >[!NOTE]
->POST requests sent via a fetch on the client side differ greatly from traditionl POST request sent from form submission. 
-This is is the reason why this route returns json with success status and redirect instructions rather than a traditional `redirect` funciton with a destination. 
+>POST requests sent via a fetch on the client side differ greatly from traditional POST requests sent from form submission. 
+This is the reason why this route returns JSON with a success status and redirect instructions rather than a traditional `redirect` function with a destination. 
 3. `/login`
     + This route simply renders an html form with password and username fields when accessed via `GET`. 
     + When accessed via `POST`, The route will confirm that the user exists in the database, and then checks whether the passwords for that user match using `check_password_hash()` function.
 4. `/info`
-    This is another key route that is essiential for core functionallity. Its role is to simply query the database for all the information (entries) that the current user has, and return it as a json object. It is worth noting that this the return value of the query must be a python list of dicts (where each dict is a single entry information with keys representing field such as time, mood .etc). This is crutial for the client to be able iterate over each of the entries and carry out decryption and rendering efficiently and uniformly on each entry. 
-    The return value of this route is conditional in that it requires context due to the rather poor design choice made early in development. 
+    This is another key route that is essential for core functionality. Its role is to simply query the database for all the information (entries) that the current user has, and return it as a json object. It is worth noting that the return value of the query must be a Python list of dicts (where each dict is a single entry of information with keys representing fields such as time, mood, etc.). This is crutial for the client to be able iterate over each of the entries and carry out decryption and rendering efficiently and uniformly on each entry. 
+    The return value of this route is conditional, requiring context due to a rather poor design choice made early in development. 
     + The route returns `info` when a user is logged in and their `id` is set in the `session['user_id']` superglobal object.
     + Other wise, the route returns an empty json object when the homepage is reached and a user is not logged in yet. 
 5. `/key`
