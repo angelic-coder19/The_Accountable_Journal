@@ -85,20 +85,20 @@ The following are the libraries and imports and their uses:
     Session(app)
     ```
 3. `flask_talisman`
-    The app imports `wraps` from this library. `wraps` allows us to "decorate" functions. which is wrapping one function within another function.
+    The app imports `wraps` from this library. `wraps` allows us to "decorate" functions. which is, wrapping one function within another function.
     This is especially useful in the allowing certain routes to require login. 
 4. `werkzeug.security` 
-    from this library, the app imports two functions 
+    From this library, the app imports two functions 
     + `generate_password_hash` 
         This funcition is obviously used create a hashed version of a password that the user enters. this is used in the `/register` route to store a hashed version of the password for security reasons. <br>
 >[!CAUTION]
 > Passwords must never be stored as plain text for obvious security reasons, thus the use of the `generate_password_hash` is strongly recommended when storing user passwords
     + `check_password_hash`
-        This high level function is used to compare whether a given string password's hash is the same as a pre made hash.
+        This high-level function is used to compare whether a given string password's hash is the same as a pre-made hash.
         It takes in a string password and a hash as inputs and returns a boolean value `true` (if the passwords match)  and `false` (if the passwords do not match).
         The return values of this function are especially useful in conditional expressions as demonstrated further in this documents.
 4. `dotenv`
-    this library gives the app access to the `load_dotenv` function. This function is useful for getting environment variables that are hidden in a `.env` file. 
+    This library gives the app access to the `load_dotenv` function. This function is useful for getting environment variables that are hidden in a `.env` file. 
     This function uses the `os` object to get access to the `.env` file. Example usage:
     ```
     load_dotenv()
