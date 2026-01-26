@@ -16,8 +16,8 @@ This document will attempt to breakdown and explain the design choices.
 2. Create a virtual environment
 3. Add a `.env` file with required environment variables such as database name and password on your local machine. 
 >[!TIP]
-> If you plan on hosting this locally on your machine, you may find it more useful to use a SQLite database which is very easy to setup and manage queries with using `SQL` from the `cs50` library.
-> However, this app uses a PostgreSQL database due to its easy integration with cloud based hosting services such as Heroku and Vercel.<br>
+> If you plan on hosting this locally on your machine, you may find it more useful to use a SQLite database, which is very easy to set up and manage queries using `SQL` from the `cs50` library.
+> However, this app uses a PostgreSQL database due to its easy integration with cloud-based hosting services such as Heroku and Vercel.<br>
 >Your can <b>NOT</b> use SQLite on cloud based hosting services due to its file type nature.
 5. Run: `python main.py` if you have completed all the above steps successfully.
 
